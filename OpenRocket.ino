@@ -7,117 +7,13 @@
   ITG-3200 : Gyro
 */
 
-/*
-  Axis definition (differs from definition printed on the board!):
-    X axis pointing forward (towards the short edge with the connector holes)
-    Y axis pointing to the right
-    and Z axis pointing down.
-    
-  Positive yaw   : clockwise
-  Positive roll  : right wing down
-  Positive pitch : nose up
-  
-  Transformation order: first yaw then pitch then roll.
-*/
-
-/*
-  Serial commands that the firmware understands:
-  
-  "#o<params>" - Set OUTPUT mode and parameters. The available options are:
-  
-      // Streaming output
-      "#o0" - DISABLE continuous streaming output. Also see #f below.
-      "#o1" - ENABLE continuous streaming output.
-      
-      // Angles output
-      "#ob" - Output angles in BINARY format (yaw/pitch/roll as binary float, so one output frame
-              is 3x4 = 12 bytes long).
-      "#ot" - Output angles in TEXT format (Output frames have form like "#YPR=-142.28,-5.38,33.52",
-              followed by carriage return and line feed [\r\n]).
-      
-      // Sensor calibration
-      "#oc" - Go to CALIBRATION output mode.
-      "#on" - When in calibration mode, go on to calibrate NEXT sensor.
-      
-      // Sensor data output
-      "#osct" - Output CALIBRATED SENSOR data of all 9 axes in TEXT format.
-                One frame consist of three lines - one for each sensor: acc, mag, gyr.
-      "#osrt" - Output RAW SENSOR data of all 9 axes in TEXT format.
-                One frame consist of three lines - one for each sensor: acc, mag, gyr.
-      "#osbt" - Output BOTH raw and calibrated SENSOR data of all 9 axes in TEXT format.
-                One frame consist of six lines - like #osrt and #osct combined (first RAW, then CALIBRATED).
-                NOTE: This is a lot of number-to-text conversion work for the little 8MHz chip on the Razor boards.
-                In fact it's too much and an output frame rate of 50Hz can not be maintained. #osbb.
-      "#oscb" - Output CALIBRATED SENSOR data of all 9 axes in BINARY format.
-                One frame consist of three 3x3 float values = 36 bytes. Order is: acc x/y/z, mag x/y/z, gyr x/y/z.
-      "#osrb" - Output RAW SENSOR data of all 9 axes in BINARY format.
-                One frame consist of three 3x3 float values = 36 bytes. Order is: acc x/y/z, mag x/y/z, gyr x/y/z.
-      "#osbb" - Output BOTH raw and calibrated SENSOR data of all 9 axes in BINARY format.
-                One frame consist of 2x36 = 72 bytes - like #osrb and #oscb combined (first RAW, then CALIBRATED).
-      
-      // Error message output        
-      "#oe0" - Disable ERROR message output.
-      "#oe1" - Enable ERROR message output.
-    
-    
-  "#f" - Request one output frame - useful when continuous output is disabled and updates are
-         required in larger intervals only. Though #f only requests one reply, replies are still
-         bound to the internal 20ms (50Hz) time raster. So worst case delay that #f can add is 19.99ms.
-         
-         
-  "#s<xy>" - Request synch token - useful to find out where the frame boundaries are in a continuous
-         binary stream or to see if tracker is present and answering. The tracker will send
-         "#SYNCH<xy>\r\n" in response (so it's possible to read using a readLine() function).
-         x and y are two mandatory but arbitrary bytes that can be used to find out which request
-         the answer belongs to.
-          
-          
-  ("#C" and "#D" - Reserved for communication with optional Bluetooth module.)
-  
-  Newline characters are not required. So you could send "#ob#o1#s", which
-  would set binary output mode, enable continuous streaming output and request
-  a synch token all at once.
-  
-  The status LED will be on if streaming output is enabled and off otherwise.
-  
-  Byte order of binary output is little-endian: least significant byte comes first.
-*/
-
-
-
-/*****************************************************************/
-/*********** USER SETUP AREA! Set your options here! *************/
-/*****************************************************************/
-
-// HARDWARE OPTIONS
-/*****************************************************************/
-// Select your hardware here by uncommenting one line!
-//#define HW__VERSION_CODE 10125 // SparkFun "9DOF Razor IMU" version "SEN-10125" (HMC5843 magnetometer)
-//#define HW__VERSION_CODE 10736 // SparkFun "9DOF Razor IMU" version "SEN-10736" (HMC5883L magnetometer)
-//#define HW__VERSION_CODE 10183 // SparkFun "9DOF Sensor Stick" version "SEN-10183" (HMC5843 magnetometer)
-//#define HW__VERSION_CODE 10321 // SparkFun "9DOF Sensor Stick" version "SEN-10321" (HMC5843 magnetometer)
 #define HW__VERSION_CODE 10724 // SparkFun "9DOF Sensor Stick" version "SEN-10724" (HMC5883L magnetometer)
-
-
-// OUTPUT OPTIONS
-/*****************************************************************/
-// Set your serial port baud rate used to send out data here!
 #define OUTPUT__BAUD_RATE 57600
-
-// Sensor data output interval in milliseconds
-// This may not work, if faster than 20ms (=50Hz)
-// Code is tuned for 20ms, so better leave it like that
 #define OUTPUT__DATA_INTERVAL 20  // in milliseconds
+#define WRITE__DATA_INTERVAL 1000  // in milliseconds
 
-// Output mode definitions (do not change)
-#define OUTPUT__MODE_CALIBRATE_SENSORS 0 // Outputs sensor min/max values as text for manual calibration
-#define OUTPUT__MODE_ANGLES 1 // Outputs yaw/pitch/roll in degrees
 #define OUTPUT__MODE_SENSORS_CALIB 2 // Outputs calibrated sensor values for all 9 axes
-#define OUTPUT__MODE_SENSORS_RAW 3 // Outputs raw (uncalibrated) sensor values for all 9 axes
-#define OUTPUT__MODE_SENSORS_BOTH 4 // Outputs calibrated AND raw sensor values for all 9 axes
-// Output format definitions (do not change)
 #define OUTPUT__FORMAT_TEXT 0 // Outputs data as text
-#define OUTPUT__FORMAT_BINARY 1 // Outputs data as binary float
 
 // Select your startup output mode and format here!
 int output_mode = OUTPUT__MODE_SENSORS_CALIB;
@@ -129,18 +25,6 @@ int output_format = OUTPUT__FORMAT_TEXT;
 // If set true, an error message will be output if we fail to read sensor data.
 // Message format: "!ERR: reading <sensor>", followed by "\r\n".
 boolean output_errors = false;  // true or false
-
-// Bluetooth
-// You can set this to true, if you have a Rovering Networks Bluetooth Module attached.
-// The connect/disconnect message prefix of the module has to be set to "#".
-// (Refer to manual, it can be set like this: SO,#)
-// When using this, streaming output will only be enabled as long as we're connected. That way
-// receiver and sender are synchronzed easily just by connecting/disconnecting.
-// It is not necessary to set this! It just makes life easier when writing code for
-// the receiving side. The Processing test sketch also works without setting this.
-// NOTE: When using this, OUTPUT__STARTUP_STREAM_ON has no effect!
-#define OUTPUT__HAS_RN_BLUETOOTH false  // true or false
-
 
 // SENSOR CALIBRATION
 /*****************************************************************/
@@ -211,21 +95,11 @@ const float magn_ellipsoid_transform[3][3] = {{0.902, -0.00354, 0.000636}, {-0.0
 #define GYRO_AVERAGE_OFFSET_Z ((float) -16.38)
 */
 
-
-// DEBUG OPTIONS
-/*****************************************************************/
 // When set to true, gyro drift correction will not be applied
 #define DEBUG__NO_DRIFT_CORRECTION false
 // Print elapsed time after each I/O loop
 #define DEBUG__PRINT_LOOP_TIME false
 
-
-/*****************************************************************/
-/****************** END OF USER SETUP AREA!  *********************/
-/*****************************************************************/
-
-
-/*****************************************************************/
 /****************** BMP085  *********************/
 
 #define BMP085_ADDRESS 0x77  // I2C address of BMP085
@@ -250,12 +124,6 @@ short temperature;
 long pressure;
 
 /*****************************************************************/
-
-// Check if hardware version code is defined
-#ifndef HW__VERSION_CODE
-  // Generate compile error
-  #error YOU HAVE TO SELECT THE HARDWARE YOU ARE USING! See "HARDWARE OPTIONS" in "USER SETUP AREA" at top of Razor_AHRS.pde (or .ino)!
-#endif
 
 #include <Wire.h>
 #include <SD.h>
@@ -338,6 +206,8 @@ boolean reset_calibration_session_flag = true;
 int num_accel_errors = 0;
 int num_magn_errors = 0;
 int num_gyro_errors = 0;
+
+
 
 void read_sensors() {
   Read_Gyro(); // Read gyroscope
@@ -441,19 +311,15 @@ char readChar()
   return Serial.read();
 }
 
-  // Debugging code, to check usage of RAM
-  // Example Call: Serial.println(freeRam());
-  int freeRam () {
-    extern int __heap_start, *__brkval; 
-    int v; 
-    return (int) &v - (__brkval == 0 ? (int) &__heap_start : (int) __brkval); 
-  }
+File dataFile;
+String dataString = "";
+String header;
+int to_save = 0;
 
 void setup()
 {
   // Init serial output
-  Serial.begin(OUTPUT__BAUD_RATE);
-  //Serial.begin(9600);  
+  Serial.begin(OUTPUT__BAUD_RATE);  
   // Init status LED
   pinMode (STATUS_LED_PIN, OUTPUT);
   digitalWrite(STATUS_LED_PIN, LOW);
@@ -474,9 +340,6 @@ void setup()
   delay(20);  // Give sensors enough time to collect data
   reset_sensor_fusion();
   
-  Serial.println(freeRam());
-  
-  //Serial.print("Initializing SD card ...");
   pinMode(10, OUTPUT);
    
   if (!SD.begin(4)) {
@@ -484,199 +347,64 @@ void setup()
     return;
   }
   Serial.println("SD initiated!.");
+  dataFile = SD.open("datalog.txt", FILE_WRITE);
+  header = "milliseconds, temperature, pressure";
+  dataFile.println(header);
   
-  // Init output
-#if (OUTPUT__HAS_RN_BLUETOOTH == true) || (OUTPUT__STARTUP_STREAM_ON == false)
-  turn_output_stream_off();
-#else
   turn_output_stream_on();
-#endif
+  //turn_output_stream_off();
 }
 
 // Main loop
 void loop()
 {
-  
-//  // Read incoming control messages
-//  if (Serial.available() >= 2)
-//  {
-//    if (Serial.read() == '#') // Start of new control message
-//    {
-//      int command = Serial.read(); // Commands
-//      if (command == 'f') // request one output _f_rame
-//        output_single_on = true;
-//      else if (command == 's') // _s_ynch request
-//      {
-//        // Read ID
-//        byte id[2];
-//        id[0] = readChar();
-//        id[1] = readChar();
-//        
-//        // Reply with synch message
-//        Serial.print("#SYNCH");
-//        Serial.write(id, 2);
-//        Serial.println();
-//      }
-//      else if (command == 'o') // Set _o_utput mode
-//      {
-//        char output_param = readChar();
-//        if (output_param == 'n')  // Calibrate _n_ext sensor
-//        {
-//          curr_calibration_sensor = (curr_calibration_sensor + 1) % 3;
-//          reset_calibration_session_flag = true;
-//        }
-//        else if (output_param == 't') // Output angles as _t_ext
-//        {
-//          output_mode = OUTPUT__MODE_ANGLES;
-//          output_format = OUTPUT__FORMAT_TEXT;
-//        }
-//        else if (output_param == 'b') // Output angles in _b_inary format
-//        {
-//          output_mode = OUTPUT__MODE_ANGLES;
-//          output_format = OUTPUT__FORMAT_BINARY;
-//        }
-//        else if (output_param == 'c') // Go to _c_alibration mode
-//        {
-//          output_mode = OUTPUT__MODE_CALIBRATE_SENSORS;
-//          reset_calibration_session_flag = true;
-//        }
-//        else if (output_param == 's') // Output _s_ensor values
-//        {
-//          char values_param = readChar();
-//          char format_param = readChar();
-//          if (values_param == 'r')  // Output _r_aw sensor values
-//            output_mode = OUTPUT__MODE_SENSORS_RAW;
-//          else if (values_param == 'c')  // Output _c_alibrated sensor values
-//            output_mode = OUTPUT__MODE_SENSORS_CALIB;
-//          else if (values_param == 'b')  // Output _b_oth sensor values (raw and calibrated)
-//            output_mode = OUTPUT__MODE_SENSORS_BOTH;
-//
-//          if (format_param == 't') // Output values as _t_text
-//            output_format = OUTPUT__FORMAT_TEXT;
-//          else if (format_param == 'b') // Output values in _b_inary format
-//            output_format = OUTPUT__FORMAT_BINARY;
-//        }
-//        else if (output_param == '0') // Disable continuous streaming output
-//        {
-//          turn_output_stream_off();
-//          reset_calibration_session_flag = true;
-//        }
-//        else if (output_param == '1') // Enable continuous streaming output
-//        {
-//          reset_calibration_session_flag = true;
-//          turn_output_stream_on();
-//        }
-//        else if (output_param == 'e') // _e_rror output settings
-//        {
-//          char error_param = readChar();
-//          if (error_param == '0') output_errors = false;
-//          else if (error_param == '1') output_errors = true;
-//          else if (error_param == 'c') // get error count
-//          {
-//            Serial.print("#AMG-ERR:");
-//            Serial.print(num_accel_errors); Serial.print(",");
-//            Serial.print(num_magn_errors); Serial.print(",");
-//            Serial.println(num_gyro_errors);
-//          }
-//        }
-//      }
-//#if OUTPUT__HAS_RN_BLUETOOTH == true
-//      // Read messages from bluetooth module
-//      // For this to work, the connect/disconnect message prefix of the module has to be set to "#".
-//      else if (command == 'C') // Bluetooth "#CONNECT" message (does the same as "#o1")
-//        turn_output_stream_on();
-//      else if (command == 'D') // Bluetooth "#DISCONNECT" message (does the same as "#o0")
-//        turn_output_stream_off();
-//#endif // OUTPUT__HAS_RN_BLUETOOTH == true
-//    }
-//    else
-//    { } // Skip character
-//  }
-
   // Time to read the sensors again?
   if((millis() - timestamp) >= OUTPUT__DATA_INTERVAL)
   {
     timestamp_old = timestamp;
     timestamp = millis();
     
-    // Print MILLIS
-    Serial.print("timestamp: ");
-    Serial.print(timestamp*0.001);
-    Serial.println(" segs");
     if (timestamp > timestamp_old)
       G_Dt = (float) (timestamp - timestamp_old) / 1000.0f; // Real time of loop run. We use this on the DCM algorithm (gyro integration time)
     else G_Dt = 0;
 
     // Update sensor readings
     read_sensors();
-
-//    if (output_mode == OUTPUT__MODE_CALIBRATE_SENSORS)  // We're in calibration mode
-//    {
-//      check_reset_calibration_session();  // Check if this session needs a reset
-//      if (output_stream_on || output_single_on) output_calibration(curr_calibration_sensor);
-//    }
-//    else if (output_mode == OUTPUT__MODE_ANGLES)  // Output angles
-//    {
-//      // Apply sensor calibration
-//      compensate_sensor_errors();
-//    
-//      // Run DCM algorithm
-//      Compass_Heading(); // Calculate magnetic heading
-//      Matrix_update();
-//      Normalize();
-//      Drift_correction();
-//      Euler_angles();
-//      
-//      if (output_stream_on || output_single_on) output_angles();
-//    }
-//    else  // Output sensor values
-//    {      
-//      if (output_stream_on || output_single_on) output_sensors();
-//    }
-//    
     output_sensors();
     
-    // open the file. note that only one file can be open at a time,
-    // so you have to close this one before opening another.
-    File dataFile = SD.open("datalog.txt", FILE_WRITE);
+    output_single_on = false;
+    
+    // BMP085
+    temperature = bmp085GetTemperature(bmp085ReadUT());
+    pressure = bmp085GetPressure(bmp085ReadUP());
+    Serial.print("Temp: ");
+    Serial.print(temperature, 1);
+    Serial.println(" C");
+    Serial.print("Pres: ");
+    Serial.print(pressure, 2);
+    Serial.println(" hPa");
+    Serial.println();
 
     // if the file is available, write to it:
     if (dataFile) {
-      dataFile.println(timestamp);
-      dataFile.close();
+      dataString = String(timestamp) + " , " + String(temperature) + ", " + String(pressure);
+      dataFile.println(dataString);
       // print to the serial port too:
-      Serial.println(timestamp);
+      //Serial.println(timestamp);
     }  
     // if the file isn't open, pop up an error:
     else {
       Serial.println("error opening datalog.txt");
-    } 
-    
-    output_single_on = false;
-    // BMP085
-    temperature = bmp085GetTemperature(bmp085ReadUT());
-    pressure = bmp085GetPressure(bmp085ReadUP());
-    Serial.print("Temperature: ");
-    Serial.print(temperature*0.1, 1);
-    Serial.println(" deg C");
-    Serial.print("Pressure: ");
-    Serial.print(pressure*0.01, 2);
-    Serial.println(" hPa");
-    Serial.println();
-    // TODO. cut delay in production
-    //delay(900);
-    
-#if DEBUG__PRINT_LOOP_TIME == true
-    Serial.print("loop time (ms) = ");
-    Serial.println(millis() - timestamp);
-#endif
-  }
-#if DEBUG__PRINT_LOOP_TIME == true
-  else
+    }
+    to_save ++;
+  } 
+  
+  if (to_save == 50)
   {
-    Serial.println("waiting...");
+    to_save = 0;
+    dataFile.close();
+    dataFile = SD.open("datalog.txt", FILE_WRITE);
   }
-#endif
 }
 
 // BMP085
