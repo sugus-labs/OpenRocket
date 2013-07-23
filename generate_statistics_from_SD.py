@@ -37,8 +37,19 @@ def manage_data_from_blocks(blocks):
 			timestamp_list = int(line_list[0])
 			#print timestamp_list
 			blocks_dict['millis_%s' % block_number].append(timestamp_list)
-	suma = sum(blocks_dict['millis_4'])
-	print suma
+	
+
+	for position, millis in enumerate(blocks_dict['millis_4']):
+		millis_interval_list = []
+		if position != 0:
+			millis_interval = millis - millis_prev
+			#print millis_interval
+			millis_interval_list.append(millis_interval)
+		millis_prev = millis
+	millis_average = sum(millis_interval_list) / position
+	print millis_interval
+
+
 	#print blocks_dict
 
 start = time.time()
