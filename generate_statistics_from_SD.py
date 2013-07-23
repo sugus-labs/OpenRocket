@@ -4,6 +4,7 @@ import time
 
 file_path = '/media/ABB4-4F3A/DATALOG.TXT'
 num_times_find_pattern = []
+blocks_of_data = []
 
 def find_pattern_in_txt(txt_file, pattern):
 	'''
@@ -14,8 +15,10 @@ def find_pattern_in_txt(txt_file, pattern):
 	for num_line, line in enumerate(fileinput.input(txt_file)):
 		if pattern in line:
 			num_times_find_pattern.append(num_line)
-	for header_line_number in num_times_find_pattern:
-		print header_line_number
+
+	with open(txt_file) as f:
+		lines = f.readlines()
+	print lines[0:3]
 
 
 #def split_data_from_txt(txt_file, new_initial_line, last_line):
