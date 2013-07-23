@@ -385,7 +385,7 @@ void loop()
     temperature = bmp085GetTemperature(bmp085ReadUT());
     pressure = bmp085GetPressure(bmp085ReadUP());
     //atm = pressure / 101325;
-    alti = calcAltitude(pressure);
+    alti = calcAltitude(pressure, getKelvin(temperature));
     //dtostrf(floatVar, minStringWidthIncDecimalPoint, numVarsAfterDecimal, charBuf);
     Serial.print("Time: "); Serial.println(timestamp);
     //Serial.print("Temp: "); Serial.print(temperature, 2); Serial.println(" C");
@@ -570,8 +570,8 @@ void writeRegister(int deviceAddress, byte address, byte val) {
   Wire.endTransmission();     // end transmission
 }
 
-int readRegister(int deviceAddress, byte address){
-
+int readRegister(int deviceAddress, byte address)
+{
   int v;
   Wire.beginTransmission(deviceAddress);
   Wire.write(address); // register to read
@@ -587,13 +587,39 @@ int readRegister(int deviceAddress, byte address){
   return v;
 }
 
-float calcAltitude(float pressure){
+float calcAltitude(float pressure, float temperature)
+{
+  static float p0 = 0;
+  static float pressArray[] = {0, 0, 0, 0, 0};
+  
+  if (p0 == 0)
+  {
+    for (int i = 0; i < 5; i++)
+    {
+      if (pressArray[i] == 0)
+      {
+        pressArray[i] = pressure;
+        
+        if (i == 4)
+        {
+          p0 = (pressArray[0]+pressArray[1]+pressArray[2]+pressArray[3]+pressArray[4])/5;
+        }
+        break;
+      }
+    }
+  }
+  
+  if (p0 != 0)
+  {
+    return (-29.4289 * temperature * log(pressure/p0));
+  }
+  else
+  {
+    return 0;
+  }
+}
 
-  float A = pressure/101325;
-  float B = 1/5.25588;
-  float C = pow(A,B);
-  C = 1 - C;
-  C = C /0.0000225577;
-
-  return C;
+float getKelvin(float celsius)
+{
+  return celsius + 273.15;
 }
