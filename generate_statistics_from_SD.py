@@ -18,7 +18,7 @@ def find_pattern_in_txt(txt_file, pattern):
 
 	with open(txt_file) as f:
 		lines = f.readlines()
-	print lines[0:3]
+	print lines[0:5]
 
 
 #def split_data_from_txt(txt_file, new_initial_line, last_line):
