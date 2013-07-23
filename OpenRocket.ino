@@ -122,6 +122,8 @@ int md;
 long b5; 
 short temperature;
 long pressure;
+float atm; // "standard atmosphere"
+float alti; 
 
 /*****************************************************************/
 
@@ -348,8 +350,7 @@ void setup()
   }
   Serial.println("SD initiated!.");
   dataFile = SD.open("datalog.txt", FILE_WRITE);
-  header = "milliseconds, temperature, pressure";
-  dataFile.println(header);
+  dataFile.println("miliseconds, temperature, pressure");
   
   turn_output_stream_on();
   //turn_output_stream_off();
@@ -377,20 +378,28 @@ void loop()
     // BMP085
     temperature = bmp085GetTemperature(bmp085ReadUT());
     pressure = bmp085GetPressure(bmp085ReadUP());
+    atm = pressure / 101325;
+    alti = calcAltitude(pressure);
+    //dtostrf(floatVar, minStringWidthIncDecimalPoint, numVarsAfterDecimal, charBuf);
     Serial.print("Temp: ");
-    Serial.print(temperature, 1);
+    Serial.print(temperature);
     Serial.println(" C");
     Serial.print("Pres: ");
-    Serial.print(pressure, 2);
+    Serial.print(pressure);
     Serial.println(" hPa");
+    Serial.print("Atmophere: ");
+    Serial.println(atm);
+    Serial.print("Altitude: ");
+    Serial.print(alti);
+    Serial.println("M");
     Serial.println();
 
-    // if the file is available, write to it:
     if (dataFile) {
-      dataString = String(timestamp) + " , " + String(temperature) + ", " + String(pressure);
-      dataFile.println(dataString);
-      // print to the serial port too:
-      //Serial.println(timestamp);
+      dataFile.print(timestamp);
+      dataFile.print(",");
+      dataFile.print(temperature);
+      dataFile.print(",");
+      dataFile.println(pressure);
     }  
     // if the file isn't open, pop up an error:
     else {
@@ -532,4 +541,37 @@ unsigned long bmp085ReadUP()
   xlsb = Wire.read();
   up = (((unsigned long) msb << 16) | ((unsigned long) lsb << 8) | (unsigned long) xlsb) >> (8-OSS);
   return up;
+}
+
+void writeRegisterBMP085(int deviceAddress, byte address, byte val) {
+  Wire.beginTransmission(deviceAddress); // start transmission to device 
+  Wire.write(address);       // send register address
+  Wire.write(val);         // send value to write
+  Wire.endTransmission();     // end transmission
+}
+
+int readRegisterBMP085(int deviceAddress, byte address){
+
+  int v;
+  Wire.beginTransmission(deviceAddress);
+  Wire.write(address); // register to read
+  Wire.endTransmission();
+
+  Wire.requestFrom(deviceAddress, 1); // read a byte
+
+  while(!Wire.available()) {
+    // waiting
+  }
+
+  v = Wire.read();
+  return v;
+}
+
+float calcAltitude(float pressure){
+  float A = pressure/101325;
+  float B = 1/5.25588;
+  float C = pow(A,B);
+  C = 1 - C;
+  C = C /0.0000225577;
+  return C;
 }
