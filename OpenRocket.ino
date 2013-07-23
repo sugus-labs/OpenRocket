@@ -387,7 +387,7 @@ void loop()
     //atm = pressure / 101325;
     alti = calcAltitude(pressure, getKelvin(temperature));
     //dtostrf(floatVar, minStringWidthIncDecimalPoint, numVarsAfterDecimal, charBuf);
-    Serial.print("Time: "); Serial.println(timestamp);
+    //Serial.print("Time: "); Serial.println(timestamp);
     //Serial.print("Temp: "); Serial.print(temperature, 2); Serial.println(" C");
     //Serial.print("Pres: "); Serial.print(pressure, 0); Serial.println(" Pa");
     //Serial.print("Atm: "); Serial.println(atm, 4);
