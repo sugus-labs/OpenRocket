@@ -350,7 +350,7 @@ void setup()
   }
   Serial.println("SD initiated!.");
   dataFile = SD.open("datalog.txt", FILE_WRITE);
-  dataFile.println("miliseconds, temperature, pressure");
+  dataFile.println("milliseconds, accel[0], accel[1], accel[2], magnetom[0], magnetom[1], magnetom[2], gyro[0], gyro[1], gyro[2], temperature, pressure, altitude");
   
   turn_output_stream_on();
   //turn_output_stream_off();
@@ -364,7 +364,13 @@ void loop()
   {
     timestamp_old = timestamp;
     timestamp = millis();
-    
+    if (dataFile) {
+      dataFile.print(timestamp); dataFile.print(",");
+    }  
+    // if the file isn't open, pop up an error:
+    else {
+      Serial.println("error opening datalog.txt");
+    }
     if (timestamp > timestamp_old)
       G_Dt = (float) (timestamp - timestamp_old) / 1000.0f; // Real time of loop run. We use this on the DCM algorithm (gyro integration time)
     else G_Dt = 0;
@@ -378,33 +384,26 @@ void loop()
     // BMP085
     temperature = bmp085GetTemperature(bmp085ReadUT());
     pressure = bmp085GetPressure(bmp085ReadUP());
-    atm = pressure / 101325;
+    //atm = pressure / 101325;
     alti = calcAltitude(pressure);
     //dtostrf(floatVar, minStringWidthIncDecimalPoint, numVarsAfterDecimal, charBuf);
-    Serial.print("Temp: ");
-    Serial.print(temperature, 2);
-    Serial.println(" C");
-    Serial.print("Pres: ");
-    Serial.print(pressure, 0);
-    Serial.println(" Pa");
-    Serial.print("Atmophere: ");
-    Serial.println(atm, 4);
-    Serial.print("Altitude: ");
-    Serial.print(alti, 2);
-    Serial.println("M");
-    Serial.println();
+    Serial.print("Time: "); Serial.println(timestamp);
+    //Serial.print("Temp: "); Serial.print(temperature, 2); Serial.println(" C");
+    //Serial.print("Pres: "); Serial.print(pressure, 0); Serial.println(" Pa");
+    //Serial.print("Atm: "); Serial.println(atm, 4);
+    //Serial.print("Alt: "); Serial.print(alti, 2); Serial.println(" M");
+    //Serial.println();
 
-//    if (dataFile) {
-//      dataFile.print(timestamp);
-//      dataFile.print(",");
-//      dataFile.print(temperature);
-//      dataFile.print(",");
-//      dataFile.println(pressure);
-//    }  
-//    // if the file isn't open, pop up an error:
-//    else {
-//      Serial.println("error opening datalog.txt");
-//    }
+    if (dataFile) {
+      dataFile.print(temperature, 2); dataFile.print(",");
+      dataFile.print(pressure, 0); dataFile.print(",");
+      //dataFile.print(atm, 4); dataFile.print(",");
+      dataFile.print(alti, 2); dataFile.println();
+    }  
+    // if the file isn't open, pop up an error:
+    else {
+      Serial.println("error opening datalog.txt");
+    }
     to_save ++;
   } 
   

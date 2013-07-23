@@ -2,20 +2,36 @@
 
 void output_sensors_text(char raw_or_calibrated)
 {
-  Serial.print("#A-"); Serial.print(raw_or_calibrated); Serial.print('=');
-  Serial.print(accel[0]); Serial.print(",");
-  Serial.print(accel[1]); Serial.print(",");
-  Serial.print(accel[2]); Serial.println();
+//  Serial.print("#A-"); Serial.print(raw_or_calibrated); Serial.print('=');
+//  Serial.print(accel[0]); Serial.print(",");
+//  Serial.print(accel[1]); Serial.print(",");
+//  Serial.print(accel[2]); Serial.println();
+//
+//  Serial.print("#M-"); Serial.print(raw_or_calibrated); Serial.print('=');
+//  Serial.print(magnetom[0]); Serial.print(",");
+//  Serial.print(magnetom[1]); Serial.print(",");
+//  Serial.print(magnetom[2]); Serial.println();
+//
+//  Serial.print("#G-"); Serial.print(raw_or_calibrated); Serial.print('=');
+//  Serial.print(gyro[0]); Serial.print(",");
+//  Serial.print(gyro[1]); Serial.print(",");
+//  Serial.print(gyro[2]); Serial.println();
+  if (dataFile) {
+    dataFile.print(accel[0]); dataFile.print(",");
+    dataFile.print(accel[1]); dataFile.print(",");
+    dataFile.print(accel[2]); dataFile.print(",");
+    dataFile.print(magnetom[0]); dataFile.print(",");
+    dataFile.print(magnetom[1]); dataFile.print(",");
+    dataFile.print(magnetom[2]); dataFile.print(",");
+    dataFile.print(gyro[0]); dataFile.print(",");
+    dataFile.print(gyro[1]); dataFile.print(",");
+    dataFile.print(gyro[2]); dataFile.print(",");
+  }  
+  // if the file isn't open, pop up an error:
+  else {
+    Serial.println("error opening datalog.txt");
+  }
 
-  Serial.print("#M-"); Serial.print(raw_or_calibrated); Serial.print('=');
-  Serial.print(magnetom[0]); Serial.print(",");
-  Serial.print(magnetom[1]); Serial.print(",");
-  Serial.print(magnetom[2]); Serial.println();
-
-  Serial.print("#G-"); Serial.print(raw_or_calibrated); Serial.print('=');
-  Serial.print(gyro[0]); Serial.print(",");
-  Serial.print(gyro[1]); Serial.print(",");
-  Serial.print(gyro[2]); Serial.println();
 }
 
 void output_sensors()
