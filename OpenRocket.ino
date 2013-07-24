@@ -349,7 +349,7 @@ void setup()
   Serial.println("SD initiated!.");
   dataFile = SD.open("datalog.txt", FILE_WRITE);
   //dataFile.println("milliseconds, accel[0], accel[1], accel[2], magnetom[0], magnetom[1], magnetom[2], gyro[0], gyro[1], gyro[2], temperature, pressure, altitude");
-  dataFile.println("m,ax,ay,az,mx,my,mz,gx,gy,gz,t,p,al");
+  dataFile.println("f,ax,ay,az,mx,my,mz,gx,gy,gz,t,p,h");
   
   turn_output_stream_on();
   //turn_output_stream_off();

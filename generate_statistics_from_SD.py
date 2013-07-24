@@ -41,7 +41,7 @@ def manage_data_from_blocks(blocks, header):
 			blocks_dict['%s%s' % (item,block_number)] = []
 		for line in block:
 			line_list = line.strip().split(",")
-			blocks_dict['m%s' % block_number].append(int(line_list[0]))
+			blocks_dict['f%s' % block_number].append(int(line_list[0]))
 			blocks_dict['ax%s' % block_number].append(float(line_list[1]))
 			blocks_dict['ay%s' % block_number].append(float(line_list[2]))
 			blocks_dict['az%s' % block_number].append(float(line_list[3]))
@@ -53,32 +53,35 @@ def manage_data_from_blocks(blocks, header):
 			blocks_dict['mz%s' % block_number].append(float(line_list[9]))
 			blocks_dict['t%s' % block_number].append(float(line_list[10]))
 			blocks_dict['p%s' % block_number].append(int(line_list[11]))
-			blocks_dict['al%s' % block_number].append(float(line_list[12]))
+			blocks_dict['h%s' % block_number].append(float(line_list[12]))
 	#print blocks_dict.keys()
-	print blocks_dict.keys()
 	return blocks_dict
 
 def process_data(blocks_dict):
 	for block in blocks_dict:
-		print block
-	millis_processed = []
-	for position, millis in enumerate(blocks_dict):
-		millis_interval_list = []
-		if position != 0:
-			millis_interval = millis - millis_prev
-			#print millis_interval
-			millis_interval_list.append(millis_interval)
-		millis_prev = millis
-		millis_average = sum(millis_interval_list) / position
-		millis_max = max(millis_interval_list)
-		millis_min = min(millis_interval_list)
-		print "Interval: ",millis_interval
-		print "MAX: ",millis_max
-		print "MIN: ",millis_min
+		if block.startswith('f'):
+			print block
 
 
 
-#start = time.time()
+	# millis_processed = []
+	# for position, millis in enumerate(blocks_dict):
+	# 	millis_interval_list = []
+	# 	if position != 0:
+	# 		millis_interval = millis - millis_prev
+	# 		#print millis_interval
+	# 		millis_interval_list.append(millis_interval)
+	# 	millis_prev = millis
+	# 	millis_average = sum(millis_interval_list) / position
+	# 	millis_max = max(millis_interval_list)
+	# 	millis_min = min(millis_interval_list)
+	# 	print "Interval: ",millis_interval
+	# 	print "MAX: ",millis_max
+	# 	print "MIN: ",millis_min
+
+
+
+start = time.time()
 blocks, header = split_in_blocks(file_path, "m")
 blocks_dict = manage_data_from_blocks(blocks, header)
 process_data(blocks_dict)
@@ -86,6 +89,6 @@ process_data(blocks_dict)
 #		print "%s" % key
 
 
-#stop = time.time()
-#total_time = stop -start
-#print total_time
+stop = time.time()
+total_time = stop -start
+print total_time
