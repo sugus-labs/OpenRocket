@@ -100,14 +100,11 @@ def basic_process_temperatures(temperatures):
 		temp_basic_info[temp_block]["MIN"] = temp_min
 	return temp_basic_info		
 
-start = time.time()
+#start = time.time()
 blocks, header = split_in_blocks(file_path, "m")
 blocks_dict = manage_data_from_blocks(blocks, header)
 process_data(blocks_dict)
-#for key in sorted(blocks_dict.iterkeys()):
-#		print "%s" % key
 
-
-stop = time.time()
-total_time = stop -start
-print total_time
+#stop = time.time()
+#total_time = stop -start
+#print total_time
