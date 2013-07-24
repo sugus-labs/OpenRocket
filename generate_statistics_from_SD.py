@@ -62,23 +62,27 @@ def process_data(blocks_dict):
 	for block in blocks_dict:
 		if block.startswith('f'):
 			fingerprints.append(block)
+	
+	fingerprint_basic_info = basic_process_fingerprints(fingerprints)
+	
+
+def basic_process_fingerprints(fingerprints):
+	fingerprint_basic_info = {}
 	for fingerprint_block in fingerprints:
 		millis_interval_list = []	
 		for position, millis in enumerate(blocks_dict[fingerprint_block]):
 		 	if position != 0:
 		 		millis_interval = millis - millis_prev
-		 		#print millis_interval
 		 		millis_interval_list.append(millis_interval)
 		 	millis_prev = millis
-		#print millis_interval_list
+		fingerprint_basic_info[fingerprint_block] = {}
 		millis_average = sum(millis_interval_list) / position
+		fingerprint_basic_info[fingerprint_block]["Av"] = millis_average
 		millis_max = max(millis_interval_list)
+		fingerprint_basic_info[fingerprint_block]["MAX"] = millis_max
 		millis_min = min(millis_interval_list)
-		print "-----------------------------------"
-		print "Average: ",millis_interval
-		print "MAX: ",millis_max
-		print "MIN: ",millis_min
-
+		fingerprint_basic_info[fingerprint_block]["MIN"] = millis_min
+	return fingerprint_basic_info
 
 
 start = time.time()
