@@ -46,49 +46,49 @@ def process_millis(concrete_blocks_dict):
 def manage_data_from_blocks(blocks):
 	blocks_dict = {}
 	for block_number, block in enumerate(blocks):
-		blocks_dict['time_%s' % block_number] = []
-		blocks_dict['acce_x_%s' % block_number] = []
-		blocks_dict['acce_y_%s' % block_number] = []
-		blocks_dict['acce_z_%s' % block_number] = []
-		blocks_dict['gyro_x_%s' % block_number] = []
-		blocks_dict['gyro_y_%s' % block_number] = []
-		blocks_dict['gyro_z_%s' % block_number] = []
-		blocks_dict['magn_x_%s' % block_number] = []
-		blocks_dict['magn_y_%s' % block_number] = []
-		blocks_dict['magn_z_%s' % block_number] = []
-		blocks_dict['temp_%s' % block_number] = []
-		blocks_dict['pres_%s' % block_number] = []
-		blocks_dict['alti_%s' % block_number] = []
+		blocks_dict['m%s' % block_number] = []
+		blocks_dict['ax%s' % block_number] = []
+		blocks_dict['ay%s' % block_number] = []
+		blocks_dict['az%s' % block_number] = []
+		blocks_dict['gx%s' % block_number] = []
+		blocks_dict['gy%s' % block_number] = []
+		blocks_dict['gz%s' % block_number] = []
+		blocks_dict['mx%s' % block_number] = []
+		blocks_dict['my%s' % block_number] = []
+		blocks_dict['mz%s' % block_number] = []
+		blocks_dict['t%s' % block_number] = []
+		blocks_dict['p%s' % block_number] = []
+		blocks_dict['a%s' % block_number] = []
 		for line in block:
 			line_list = line.strip().split(",")
 			#print line_list
-			time_list = int(line_list[0])
-			acce_x_list = float(line_list[1])
-			acce_y_list = float(line_list[2])
-			acce_z_list = float(line_list[3])
-			gyro_x_list = float(line_list[4])
-			gyro_y_list = float(line_list[5])
-			gyro_z_list = float(line_list[6])
-			magn_x_list = float(line_list[7])
-			magn_y_list = float(line_list[8])
-			magn_z_list = float(line_list[9])
-			temp_list = float(line_list[10])
-			pres_list = int(line_list[11])
-			alti_list = float(line_list[12])
+			m_list = int(line_list[0])
+			ax_list = float(line_list[1])
+			ay_list = float(line_list[2])
+			az_list = float(line_list[3])
+			gx_list = float(line_list[4])
+			gy_list = float(line_list[5])
+			gz_list = float(line_list[6])
+			mx_list = float(line_list[7])
+			my_list = float(line_list[8])
+			mz_list = float(line_list[9])
+			t_list = float(line_list[10])
+			p_list = int(line_list[11])
+			a_list = float(line_list[12])
 			#print timestamp_list
-			blocks_dict['time_%s' % block_number].append(time_list)
-			blocks_dict['acce_x_%s' % block_number].append(acce_x_list)
-			blocks_dict['acce_y_%s' % block_number].append(acce_y_list)
-			blocks_dict['acce_z_%s' % block_number].append(acce_z_list)
-			blocks_dict['gyro_x_%s' % block_number].append(gyro_x_list)
-			blocks_dict['gyro_y_%s' % block_number].append(gyro_y_list)
-			blocks_dict['gyro_z_%s' % block_number].append(gyro_z_list)
-			blocks_dict['magn_x_%s' % block_number].append(magn_x_list)
-			blocks_dict['magn_y_%s' % block_number].append(magn_y_list)
-			blocks_dict['magn_z_%s' % block_number].append(magn_z_list)
-			blocks_dict['temp_%s' % block_number].append(temp_list)
-			blocks_dict['pres_%s' % block_number].append(pres_list)
-			blocks_dict['alti_%s' % block_number].append(alti_list)
+			blocks_dict['t%s' % block_number].append(m_list)
+			blocks_dict['ax%s' % block_number].append(ax_list)
+			blocks_dict['ay%s' % block_number].append(ay_list)
+			blocks_dict['az%s' % block_number].append(az_list)
+			blocks_dict['gx%s' % block_number].append(gx_list)
+			blocks_dict['gy%s' % block_number].append(gy_list)
+			blocks_dict['gz%s' % block_number].append(gz_list)
+			blocks_dict['mx%s' % block_number].append(mx_list)
+			blocks_dict['my%s' % block_number].append(my_list)
+			blocks_dict['mz%s' % block_number].append(mz_list)
+			blocks_dict['t%s' % block_number].append(t_list)
+			blocks_dict['p%s' % block_number].append(p_list)
+			blocks_dict['a%s' % block_number].append(a_list)
 	#for key in blocks_dict:
 		#process_millis(blocks_dict[key])
 	for key in sorted(blocks_dict.iterkeys()):
@@ -98,7 +98,7 @@ def manage_data_from_blocks(blocks):
 	#print blocks_dict
 
 #start = time.time()
-blocks = split_in_blocks(file_path, "millis")
+blocks = split_in_blocks(file_path, "m")
 manage_data_from_blocks(blocks)
 #stop = time.time()
 #total_time = stop -start
