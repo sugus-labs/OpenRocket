@@ -58,7 +58,7 @@ def manage_data_from_blocks(blocks):
 		blocks_dict['mz%s' % block_number] = []
 		blocks_dict['t%s' % block_number] = []
 		blocks_dict['p%s' % block_number] = []
-		blocks_dict['a%s' % block_number] = []
+		blocks_dict['al%s' % block_number] = []
 		for line in block:
 			line_list = line.strip().split(",")
 			#print line_list
@@ -74,7 +74,7 @@ def manage_data_from_blocks(blocks):
 			mz_list = float(line_list[9])
 			t_list = float(line_list[10])
 			p_list = int(line_list[11])
-			a_list = float(line_list[12])
+			al_list = float(line_list[12])
 			#print timestamp_list
 			blocks_dict['t%s' % block_number].append(m_list)
 			blocks_dict['ax%s' % block_number].append(ax_list)
@@ -88,18 +88,22 @@ def manage_data_from_blocks(blocks):
 			blocks_dict['mz%s' % block_number].append(mz_list)
 			blocks_dict['t%s' % block_number].append(t_list)
 			blocks_dict['p%s' % block_number].append(p_list)
-			blocks_dict['a%s' % block_number].append(a_list)
+			blocks_dict['al%s' % block_number].append(al_list)
 	#for key in blocks_dict:
 		#process_millis(blocks_dict[key])
-	for key in sorted(blocks_dict.iterkeys()):
-		print "%s" % key
-
+	#for key in sorted(blocks_dict.iterkeys()):
+		#print "%s" % key
+	return blocks_dict
 
 	#print blocks_dict
 
 #start = time.time()
 blocks = split_in_blocks(file_path, "m")
-manage_data_from_blocks(blocks)
+blocks_dict = manage_data_from_blocks(blocks)
+for key in sorted(blocks_dict.iterkeys()):
+		print "%s" % key
+
+
 #stop = time.time()
 #total_time = stop -start
 #print total_time
