@@ -28,6 +28,7 @@ def split_in_blocks(txt_file, pattern):
 	return blocks_of_data
 
 def process_millis(concrete_blocks_dict):
+	millis_processed = []
 	for position, millis in enumerate(concrete_blocks_dict):
 		millis_interval_list = []
 		if position != 0:
@@ -35,25 +36,61 @@ def process_millis(concrete_blocks_dict):
 			#print millis_interval
 			millis_interval_list.append(millis_interval)
 		millis_prev = millis
-	millis_average = sum(millis_interval_list) / position
-	millis_max = max(millis_interval_list)
-	millis_min = min(millis_interval_list)
-	print "Interval: ",millis_interval
-	print "MAX: ",millis_max
-	print "MIN: ",millis_min
+		millis_average = sum(millis_interval_list) / position
+		millis_max = max(millis_interval_list)
+		millis_min = min(millis_interval_list)
+		print "Interval: ",millis_interval
+		print "MAX: ",millis_max
+		print "MIN: ",millis_min
 
 def manage_data_from_blocks(blocks):
 	blocks_dict = {}
 	for block_number, block in enumerate(blocks):
-		blocks_dict['millis_%s' % block_number] = []
+		blocks_dict['time_%s' % block_number] = []
+		blocks_dict['acce_x_%s' % block_number] = []
+		blocks_dict['acce_y_%s' % block_number] = []
+		blocks_dict['acce_z_%s' % block_number] = []
+		blocks_dict['gyro_x_%s' % block_number] = []
+		blocks_dict['gyro_y_%s' % block_number] = []
+		blocks_dict['gyro_z_%s' % block_number] = []
+		blocks_dict['magn_x_%s' % block_number] = []
+		blocks_dict['magn_y_%s' % block_number] = []
+		blocks_dict['magn_z_%s' % block_number] = []
+		blocks_dict['temp_%s' % block_number] = []
+		blocks_dict['pres_%s' % block_number] = []
+		blocks_dict['alti_%s' % block_number] = []
 		for line in block:
 			line_list = line.strip().split(",")
 			#print line_list
-			timestamp_list = int(line_list[0])
+			time_list = int(line_list[0])
+			acce_x_list = int(line_list[1])
+			acce_y_list = int(line_list[2])
+			acce_z_list = int(line_list[3])
+			gyro_x_list = int(line_list[4])
+			gyro_y_list = int(line_list[5])
+			gyro_z_list = int(line_list[6])
+			magn_x_list = int(line_list[7])
+			magn_y_list = int(line_list[8])
+			magn_z_list = int(line_list[9])
+			temp_list = int(line_list[10])
+			pres_list = int(line_list[11])
+			alti_list = int(line_list[12])
 			#print timestamp_list
-			blocks_dict['millis_%s' % block_number].append(timestamp_list)
-	for key in blocks_dict:
-		process_millis(blocks_dict[key])
+			blocks_dict['time_%s' % block_number].append(time_list)
+			blocks_dict['acce_x_%s' % block_number].append(acce_x_list)
+			blocks_dict['acce_y_%s' % block_number].append(acce_y_list)
+			blocks_dict['acce_z_%s' % block_number].append(acce_z_list)
+			blocks_dict['gyro_x_%s' % block_number].append(gyro_x_list)
+			blocks_dict['gyro_y_%s' % block_number].append(gyro_y_list)
+			blocks_dict['gyro_z_%s' % block_number].append(gyro_z_list)
+			blocks_dict['magn_x_%s' % block_number].append(magn_x_list)
+			blocks_dict['magn_y_%s' % block_number].append(magn_y_list)
+			blocks_dict['magn_z_%s' % block_number].append(magn_z_list)
+			blocks_dict['temp_%s' % block_number].append(temp_list)
+			blocks_dict['pres_%s' % block_number].append(pres_list)
+			blocks_dict['alti_%s' % block_number].append(alti_list)
+	#for key in blocks_dict:
+		#process_millis(blocks_dict[key])
 
 
 
