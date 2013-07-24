@@ -79,7 +79,7 @@ def basic_process_fingerprints(fingerprints):
 		 		millis_interval = millis - millis_prev
 		 		millis_interval_list.append(millis_interval)
 		 	millis_prev = millis
-		fingerprint_basic_info[fingerprint_block] = collections.OrderedDict()
+		fingerprint_basic_info[fingerprint_block] = {}
 		millis_average = sum(millis_interval_list) / position
 		fingerprint_basic_info[fingerprint_block]["Av"] = millis_average
 		millis_max = max(millis_interval_list)
@@ -91,7 +91,7 @@ def basic_process_fingerprints(fingerprints):
 def basic_process_temperatures(temperatures):
 	temp_basic_info = collections.OrderedDict()
 	for temp_block in temperatures:
-		temp_basic_info[temp_block] = collections.OrderedDict()
+		temp_basic_info[temp_block] = {}
 		temp_average = sum(blocks_dict[temp_block]) / len(blocks_dict[temp_block])
 		temp_basic_info[temp_block]["Av"] = "%.2f" % temp_average 
 		temp_max = max(blocks_dict[temp_block])
