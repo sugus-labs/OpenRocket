@@ -1,4 +1,5 @@
 import fileinput
+import collections
 import time
 
 file_path = '/media/ABB4-4F3A/DATALOG.TXT'
@@ -14,7 +15,7 @@ def split_in_blocks(txt_file, pattern):
 			num_times_find_pattern.append(num_line)
 		if num_line == 0:
 			header = list(line.strip().split(","))
-			print header
+			#print header
 	blocks_of_data = []
 	with open(txt_file) as f:
 		lines = f.readlines()
@@ -34,56 +35,34 @@ def manage_data_from_blocks(blocks, header):
 	Divide al the text in blocks tagged with their type of data (accelaration, temperature, ...) continued by a number of block
 	Return: A dict that contains all the different types of data diferentiated and numbered.
 	'''
-	blocks_dict = {}
+	blocks_dict = collections.OrderedDict()
 	for block_number, block in enumerate(blocks):
-		blocks_dict['m%s' % block_number] = []
-		blocks_dict['ax%s' % block_number] = []
-		blocks_dict['ay%s' % block_number] = []
-		blocks_dict['az%s' % block_number] = []
-		blocks_dict['gx%s' % block_number] = []
-		blocks_dict['gy%s' % block_number] = []
-		blocks_dict['gz%s' % block_number] = []
-		blocks_dict['mx%s' % block_number] = []
-		blocks_dict['my%s' % block_number] = []
-		blocks_dict['mz%s' % block_number] = []
-		blocks_dict['t%s' % block_number] = []
-		blocks_dict['p%s' % block_number] = []
-		blocks_dict['al%s' % block_number] = []
+		for item in header:
+			blocks_dict['%s%s' % (item,block_number)] = []
 		for line in block:
 			line_list = line.strip().split(",")
-			#print line_list
-			m_list = int(line_list[0])
-			ax_list = float(line_list[1])
-			ay_list = float(line_list[2])
-			az_list = float(line_list[3])
-			gx_list = float(line_list[4])
-			gy_list = float(line_list[5])
-			gz_list = float(line_list[6])
-			mx_list = float(line_list[7])
-			my_list = float(line_list[8])
-			mz_list = float(line_list[9])
-			t_list = float(line_list[10])
-			p_list = int(line_list[11])
-			al_list = float(line_list[12])
-			#print timestamp_list
-			blocks_dict['t%s' % block_number].append(m_list)
-			blocks_dict['ax%s' % block_number].append(ax_list)
-			blocks_dict['ay%s' % block_number].append(ay_list)
-			blocks_dict['az%s' % block_number].append(az_list)
-			blocks_dict['gx%s' % block_number].append(gx_list)
-			blocks_dict['gy%s' % block_number].append(gy_list)
-			blocks_dict['gz%s' % block_number].append(gz_list)
-			blocks_dict['mx%s' % block_number].append(mx_list)
-			blocks_dict['my%s' % block_number].append(my_list)
-			blocks_dict['mz%s' % block_number].append(mz_list)
-			blocks_dict['t%s' % block_number].append(t_list)
-			blocks_dict['p%s' % block_number].append(p_list)
-			blocks_dict['al%s' % block_number].append(al_list)
+			blocks_dict['m%s' % block_number].append(int(line_list[0]))
+			blocks_dict['ax%s' % block_number].append(float(line_list[1]))
+			blocks_dict['ay%s' % block_number].append(float(line_list[2]))
+			blocks_dict['az%s' % block_number].append(float(line_list[3]))
+			blocks_dict['gx%s' % block_number].append(float(line_list[4]))
+			blocks_dict['gy%s' % block_number].append(float(line_list[5]))
+			blocks_dict['gz%s' % block_number].append(float(line_list[6]))
+			blocks_dict['mx%s' % block_number].append(float(line_list[7]))
+			blocks_dict['my%s' % block_number].append(float(line_list[8]))
+			blocks_dict['mz%s' % block_number].append(float(line_list[9]))
+			blocks_dict['t%s' % block_number].append(float(line_list[10]))
+			blocks_dict['p%s' % block_number].append(int(line_list[11]))
+			blocks_dict['al%s' % block_number].append(float(line_list[12]))
+	#print blocks_dict.keys()
+	print blocks_dict.keys()
 	return blocks_dict
 
-def process_data(concrete_blocks_dict):
+def process_data(blocks_dict):
+	for block in blocks_dict:
+		print block
 	millis_processed = []
-	for position, millis in enumerate(concrete_blocks_dict):
+	for position, millis in enumerate(blocks_dict):
 		millis_interval_list = []
 		if position != 0:
 			millis_interval = millis - millis_prev
@@ -102,6 +81,7 @@ def process_data(concrete_blocks_dict):
 #start = time.time()
 blocks, header = split_in_blocks(file_path, "m")
 blocks_dict = manage_data_from_blocks(blocks, header)
+process_data(blocks_dict)
 #for key in sorted(blocks_dict.iterkeys()):
 #		print "%s" % key
 
