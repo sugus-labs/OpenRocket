@@ -27,6 +27,21 @@ def split_in_blocks(txt_file, pattern):
 		blocks_of_data.append(block_lines)
 	return blocks_of_data
 
+def	find_millis_average(concrete_blocks_dict):
+	for position, millis in enumerate(concrete_blocks_dict):
+		millis_interval_list = []
+		if position != 0:
+			millis_interval = millis - millis_prev
+			#print millis_interval
+			millis_interval_list.append(millis_interval)
+		millis_prev = millis
+	millis_average = sum(millis_interval_list) / position
+	millis_max = max(millis_interval_list)
+	millis_min = min(millis_interval_list)
+	print "Interval: ",millis_interval
+	print "MAX: ",millis_max
+	print "MIN: ",millis_min
+
 def manage_data_from_blocks(blocks):
 	blocks_dict = {}
 	for block_number, block in enumerate(blocks):
@@ -37,24 +52,16 @@ def manage_data_from_blocks(blocks):
 			timestamp_list = int(line_list[0])
 			#print timestamp_list
 			blocks_dict['millis_%s' % block_number].append(timestamp_list)
-	
+	for key in blocks_dict:
+		find_millis_average(blocks_dict[key])
 
-	for position, millis in enumerate(blocks_dict['millis_4']):
-		millis_interval_list = []
-		if position != 0:
-			millis_interval = millis - millis_prev
-			#print millis_interval
-			millis_interval_list.append(millis_interval)
-		millis_prev = millis
-	millis_average = sum(millis_interval_list) / position
-	print millis_interval
 
 
 	#print blocks_dict
 
-start = time.time()
+#start = time.time()
 blocks = split_in_blocks(file_path, "millis")
 manage_data_from_blocks(blocks)
-stop = time.time()
-total_time = stop -start
-print total_time
+#stop = time.time()
+#total_time = stop -start
+#print total_time
