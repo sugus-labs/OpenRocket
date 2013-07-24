@@ -80,7 +80,7 @@ def basic_process_fingerprints(fingerprints):
 		 		millis_interval_list.append(millis_interval)
 		 	millis_prev = millis
 		fingerprint_basic_info[fingerprint_block] = {}
-		millis_average = sum(millis_interval_list) / position
+		millis_average = sum(millis_interval_list) / len(blocks_dict[fingerprint_block])
 		fingerprint_basic_info[fingerprint_block]["Av"] = millis_average
 		millis_max = max(millis_interval_list)
 		fingerprint_basic_info[fingerprint_block]["MAX"] = millis_max
