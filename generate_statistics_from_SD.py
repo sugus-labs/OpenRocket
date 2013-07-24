@@ -59,15 +59,19 @@ def manage_data_from_blocks(blocks, header):
 
 def process_data(blocks_dict):
 	fingerprints = []
+	temperatures = []
 	for block in blocks_dict:
 		if block.startswith('f'):
 			fingerprints.append(block)
-	
+		if block.startswith('t'):
+			temperatures.append(block)
 	fingerprint_basic_info = basic_process_fingerprints(fingerprints)
-	
+	temp_basic_info = basic_process_temperatures(temperatures)
+	#print fingerprint_basic_info
+	#print temperatures_basic_info
 
 def basic_process_fingerprints(fingerprints):
-	fingerprint_basic_info = {}
+	fingerprint_basic_info = collections.OrderedDict()
 	for fingerprint_block in fingerprints:
 		millis_interval_list = []	
 		for position, millis in enumerate(blocks_dict[fingerprint_block]):
@@ -75,7 +79,7 @@ def basic_process_fingerprints(fingerprints):
 		 		millis_interval = millis - millis_prev
 		 		millis_interval_list.append(millis_interval)
 		 	millis_prev = millis
-		fingerprint_basic_info[fingerprint_block] = {}
+		fingerprint_basic_info[fingerprint_block] = collections.OrderedDict()
 		millis_average = sum(millis_interval_list) / position
 		fingerprint_basic_info[fingerprint_block]["Av"] = millis_average
 		millis_max = max(millis_interval_list)
@@ -84,6 +88,17 @@ def basic_process_fingerprints(fingerprints):
 		fingerprint_basic_info[fingerprint_block]["MIN"] = millis_min
 	return fingerprint_basic_info
 
+def basic_process_temperatures(temperatures):
+	temp_basic_info = collections.OrderedDict()
+	for temp_block in temperatures:
+		temp_basic_info[temp_block] = collections.OrderedDict()
+		temp_average = sum(blocks_dict[temp_block]) / len(blocks_dict[temp_block])
+		temp_basic_info[temp_block]["Av"] = "%.2f" % temp_average 
+		temp_max = max(blocks_dict[temp_block])
+		temp_basic_info[temp_block]["MAX"] = temp_max
+		temp_min = min(blocks_dict[temp_block])
+		temp_basic_info[temp_block]["MIN"] = temp_min
+	return temp_basic_info		
 
 start = time.time()
 blocks, header = split_in_blocks(file_path, "m")
