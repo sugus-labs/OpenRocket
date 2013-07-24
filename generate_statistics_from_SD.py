@@ -1,6 +1,9 @@
 import fileinput
 import collections
 import time
+import numpy as np
+from pylab import *
+from matplotlib import pyplot as plt
 
 file_path = '/media/ABB4-4F3A/DATALOG.TXT'
 
@@ -67,6 +70,7 @@ def process_data(blocks_dict):
 			temperatures.append(block)
 	fingerprint_basic_info = basic_process_fingerprints(fingerprints)
 	temp_basic_info = basic_process_temperatures(temperatures)
+	print_temp_evolution(fingerprints[0], fingerprint_basic_info, temperatures[0])
 	#print fingerprint_basic_info
 	#print temperatures_basic_info
 
@@ -98,8 +102,29 @@ def basic_process_temperatures(temperatures):
 		temp_basic_info[temp_block]["MAX"] = temp_max
 		temp_min = min(blocks_dict[temp_block])
 		temp_basic_info[temp_block]["MIN"] = temp_min
-	return temp_basic_info		
+	return temp_basic_info
 
+def print_temp_evolution(fingerprints, fingerprint_basic_info, temperatures):
+	print blocks_dict[fingerprints]
+	print blocks_dict[temperatures]
+
+	#define some data
+	x = blocks_dict[fingerprints]
+	y = blocks_dict[temperatures]
+	plt.plot(x, y, linewidth=1.0, marker="o", color="green")
+	xlabel('time (milliseconds)')
+	ylabel('temperature (C)')
+	title('Simple plot')
+	grid(True)
+	#configure  X axes
+	plt.xticks(blocks_dict[fingerprints][::len(blocks_dict[fingerprints])/8])
+
+	#configure  Y axes
+	plt.ylim(min(blocks_dict[temperatures]) - 0.02, max(blocks_dict[temperatures]) + 0.02)
+	#plt.yticks([20, 21, 20.5, 20.8])
+	#show plot
+	plt.show()
+	
 #start = time.time()
 blocks, header = split_in_blocks(file_path, "m")
 blocks_dict = manage_data_from_blocks(blocks, header)
