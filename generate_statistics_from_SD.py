@@ -113,15 +113,16 @@ def print_temp_evolution(fingerprints, fingerprint_basic_info, temperatures):
 	y = blocks_dict[temperatures]
 
 	plt.figure(1)
+	#subplot(nrows, ncols, plot_number)
 	plt.subplot(211)
 
 	plt.plot(x, y, linewidth=1.0, marker="o", color="green")
 	xlabel('time (milliseconds)')
 	ylabel('temperature (C)')
-	title('Simple plot')
+	title('Simple plot', fontsize=10)
 	grid(True)
 	#configure  X axes
-	plt.xticks(blocks_dict[fingerprints][::len(blocks_dict[fingerprints])/8])
+	plt.xticks(blocks_dict[fingerprints][::len(blocks_dict[fingerprints])/10], rotation=0)
 	plt.annotate('Despegue', xy=(2200, 34.82), xytext=(2300, 34.88),
             arrowprops=dict(facecolor='black', shrink=0.05),
             )
@@ -134,8 +135,22 @@ def print_temp_evolution(fingerprints, fingerprint_basic_info, temperatures):
 	#show plot
 
 	plt.subplot(212)
-	plt.plot(x, y, linewidth=1.0, marker="o", color="green")
-
+	plt.plot(x, y, linewidth=1.0, color="green")
+	xlabel('time (milliseconds)')
+	ylabel('temperature (C)')
+	title('Simple plot', fontsize=10)
+	grid(True)
+	#configure  X axes
+	plt.xticks(blocks_dict[fingerprints][::len(blocks_dict[fingerprints])/8])
+	plt.annotate('Despegue', xy=(2200, 34.82), xytext=(2300, 34.88),
+            arrowprops=dict(facecolor='black', shrink=0.05),
+            )
+	plt.annotate('Paracaidas', xy=(7200, 34.82), xytext=(6300, 34.88),
+            arrowprops=dict(facecolor='black', shrink=0.05),
+            )
+	#configure  Y axes
+	plt.ylim(min(blocks_dict[temperatures]) - 0.02, max(blocks_dict[temperatures]) + 0.02)
+	plt.suptitle('temperatures', fontsize=12)
 	plt.show()
 	
 #start = time.time()
