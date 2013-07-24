@@ -58,26 +58,26 @@ def manage_data_from_blocks(blocks, header):
 	return blocks_dict
 
 def process_data(blocks_dict):
+	fingerprints = []
 	for block in blocks_dict:
 		if block.startswith('f'):
-			print block
-
-
-
-	# millis_processed = []
-	# for position, millis in enumerate(blocks_dict):
-	# 	millis_interval_list = []
-	# 	if position != 0:
-	# 		millis_interval = millis - millis_prev
-	# 		#print millis_interval
-	# 		millis_interval_list.append(millis_interval)
-	# 	millis_prev = millis
-	# 	millis_average = sum(millis_interval_list) / position
-	# 	millis_max = max(millis_interval_list)
-	# 	millis_min = min(millis_interval_list)
-	# 	print "Interval: ",millis_interval
-	# 	print "MAX: ",millis_max
-	# 	print "MIN: ",millis_min
+			fingerprints.append(block)
+	for fingerprint_block in fingerprints:
+		millis_interval_list = []	
+		for position, millis in enumerate(blocks_dict[fingerprint_block]):
+		 	if position != 0:
+		 		millis_interval = millis - millis_prev
+		 		#print millis_interval
+		 		millis_interval_list.append(millis_interval)
+		 	millis_prev = millis
+		#print millis_interval_list
+		millis_average = sum(millis_interval_list) / position
+		millis_max = max(millis_interval_list)
+		millis_min = min(millis_interval_list)
+		print "-----------------------------------"
+		print "Average: ",millis_interval
+		print "MAX: ",millis_max
+		print "MIN: ",millis_min
 
 
 
