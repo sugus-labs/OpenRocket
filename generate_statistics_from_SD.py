@@ -27,7 +27,7 @@ def split_in_blocks(txt_file, pattern):
 		blocks_of_data.append(block_lines)
 	return blocks_of_data
 
-def	find_millis_average(concrete_blocks_dict):
+def process_millis(concrete_blocks_dict):
 	for position, millis in enumerate(concrete_blocks_dict):
 		millis_interval_list = []
 		if position != 0:
@@ -53,7 +53,7 @@ def manage_data_from_blocks(blocks):
 			#print timestamp_list
 			blocks_dict['millis_%s' % block_number].append(timestamp_list)
 	for key in blocks_dict:
-		find_millis_average(blocks_dict[key])
+		process_millis(blocks_dict[key])
 
 
 
