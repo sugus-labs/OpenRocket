@@ -320,9 +320,7 @@ int to_save = 0;
 
 void setup()
 {
-  // Init serial output
   Serial.begin(OUTPUT__BAUD_RATE);  
-  // Init status LED
   pinMode (STATUS_LED_PIN, OUTPUT);
   digitalWrite(STATUS_LED_PIN, LOW);
   
@@ -350,16 +348,15 @@ void setup()
   }
   Serial.println("SD initiated!.");
   dataFile = SD.open("datalog.txt", FILE_WRITE);
-  dataFile.println("milliseconds, accel[0], accel[1], accel[2], magnetom[0], magnetom[1], magnetom[2], gyro[0], gyro[1], gyro[2], temperature, pressure, altitude");
+  //dataFile.println("milliseconds, accel[0], accel[1], accel[2], magnetom[0], magnetom[1], magnetom[2], gyro[0], gyro[1], gyro[2], temperature, pressure, altitude");
+  dataFile.println("m, ax, ay, az, mx, my, mz, gx, gy, gz, t, p, a");
   
   turn_output_stream_on();
   //turn_output_stream_off();
 }
 
-// Main loop
 void loop()
 {
-  // Time to read the sensors again?
   if((millis() - timestamp) >= OUTPUT__DATA_INTERVAL)
   {
     timestamp_old = timestamp;
@@ -367,7 +364,6 @@ void loop()
     if (dataFile) {
       dataFile.print(timestamp); dataFile.print(",");
     }  
-    // if the file isn't open, pop up an error:
     else {
       Serial.println("error opening datalog.txt");
     }

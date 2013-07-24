@@ -63,18 +63,18 @@ def manage_data_from_blocks(blocks):
 			line_list = line.strip().split(",")
 			#print line_list
 			time_list = int(line_list[0])
-			acce_x_list = int(line_list[1])
-			acce_y_list = int(line_list[2])
-			acce_z_list = int(line_list[3])
-			gyro_x_list = int(line_list[4])
-			gyro_y_list = int(line_list[5])
-			gyro_z_list = int(line_list[6])
-			magn_x_list = int(line_list[7])
-			magn_y_list = int(line_list[8])
-			magn_z_list = int(line_list[9])
-			temp_list = int(line_list[10])
+			acce_x_list = float(line_list[1])
+			acce_y_list = float(line_list[2])
+			acce_z_list = float(line_list[3])
+			gyro_x_list = float(line_list[4])
+			gyro_y_list = float(line_list[5])
+			gyro_z_list = float(line_list[6])
+			magn_x_list = float(line_list[7])
+			magn_y_list = float(line_list[8])
+			magn_z_list = float(line_list[9])
+			temp_list = float(line_list[10])
 			pres_list = int(line_list[11])
-			alti_list = int(line_list[12])
+			alti_list = float(line_list[12])
 			#print timestamp_list
 			blocks_dict['time_%s' % block_number].append(time_list)
 			blocks_dict['acce_x_%s' % block_number].append(acce_x_list)
@@ -91,7 +91,8 @@ def manage_data_from_blocks(blocks):
 			blocks_dict['alti_%s' % block_number].append(alti_list)
 	#for key in blocks_dict:
 		#process_millis(blocks_dict[key])
-
+	for key in sorted(blocks_dict.iterkeys()):
+		print "%s" % key
 
 
 	#print blocks_dict
