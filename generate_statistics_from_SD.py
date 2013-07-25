@@ -111,8 +111,8 @@ def print_temp_evolution(fingerprints, temperatures):
 		x = blocks_dict[fingerprints[num]]
 		y = blocks_dict[temperatures[num]]
 		#subplot(nrows, ncols, plot_number)
-		nrows = int(math.ceil(float(len(fingerprints) / 4.0)))
-		ncols = 4
+		nrows = int(math.ceil(float(len(fingerprints) / 3.0)))
+		ncols = 3
 		subplot_index = "%s%s%s" % (nrows, ncols, num + 1)
 		plt.subplot(subplot_index)
 
@@ -123,6 +123,7 @@ def print_temp_evolution(fingerprints, temperatures):
 		grid(True)
 		plt.xticks(blocks_dict[fingerprints[num]][::len(blocks_dict[fingerprints[num]])/10], rotation=30, fontsize=8)
 		plt.annotate('Despegue', xy=(2200, 34.82), xytext=(2300, 34.88),
+				bbox=dict(boxstyle="round", fc="0.8"),
 	            arrowprops=dict(facecolor='black', shrink=0.05),
 	            )
 		plt.annotate('Paracaidas', xy=(7200, 34.82), xytext=(6300, 34.88),
@@ -130,7 +131,7 @@ def print_temp_evolution(fingerprints, temperatures):
 	            )
 		plt.ylim(min(blocks_dict[temperatures[num]]) - 0.02, max(blocks_dict[temperatures[num]]) + 0.02)
 		plt.yticks(fontsize=8)
-	plt.suptitle('temperatures', fontsize=12)
+	plt.suptitle('temperatures in data', fontsize=12)
 	plt.show()
 	
 #start = time.time()
