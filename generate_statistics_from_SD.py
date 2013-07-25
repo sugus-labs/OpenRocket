@@ -70,7 +70,7 @@ def process_data(blocks_dict):
 			temperatures.append(block)
 	fingerprint_basic_info = basic_process_fingerprints(fingerprints)
 	temp_basic_info = basic_process_temperatures(temperatures)
-	print_temp_evolution(fingerprints[0], fingerprint_basic_info, temperatures[0])
+	print_temp_evolution(fingerprints, temperatures)
 	#print fingerprint_basic_info
 	#print temperatures_basic_info
 
@@ -104,54 +104,50 @@ def basic_process_temperatures(temperatures):
 		temp_basic_info[temp_block]["MIN"] = temp_min
 	return temp_basic_info
 
-def print_temp_evolution(fingerprints, fingerprint_basic_info, temperatures):
-	print blocks_dict[fingerprints]
-	print blocks_dict[temperatures]
-
-	#define some data
-	x = blocks_dict[fingerprints]
-	y = blocks_dict[temperatures]
-
+def print_temp_evolution(fingerprints, temperatures):
 	plt.figure(1)
-	#subplot(nrows, ncols, plot_number)
-	plt.subplot(211)
+	for num in range(len(fingerprints)):
+		x = blocks_dict[fingerprints[num]]
+		y = blocks_dict[temperatures[num]]
+		#subplot(nrows, ncols, plot_number)
+		plt.subplot(241)
 
-	plt.plot(x, y, linewidth=1.0, marker="o", color="green")
-	xlabel('time (milliseconds)')
-	ylabel('temperature (C)')
-	title('Simple plot', fontsize=10)
-	grid(True)
-	#configure  X axes
-	plt.xticks(blocks_dict[fingerprints][::len(blocks_dict[fingerprints])/10], rotation=0)
-	plt.annotate('Despegue', xy=(2200, 34.82), xytext=(2300, 34.88),
-            arrowprops=dict(facecolor='black', shrink=0.05),
-            )
-	plt.annotate('Paracaidas', xy=(7200, 34.82), xytext=(6300, 34.88),
-            arrowprops=dict(facecolor='black', shrink=0.05),
-            )
-	#configure  Y axes
-	plt.ylim(min(blocks_dict[temperatures]) - 0.02, max(blocks_dict[temperatures]) + 0.02)
-	#plt.yticks([20, 21, 20.5, 20.8])
-	#show plot
+		plt.plot(x, y, linewidth=1.0, marker="o", color="green")
+		xlabel('time (milliseconds)')
+		ylabel('temperature (C)')
+		title('Simple plot', fontsize=10)
+		grid(True)
+		# #configure  X axes
+		plt.xticks(blocks_dict[fingerprints[num]][::len(blocks_dict[fingerprints[num]])/10], rotation=0)
+		plt.annotate('Despegue', xy=(2200, 34.82), xytext=(2300, 34.88),
+	            arrowprops=dict(facecolor='black', shrink=0.05),
+	            )
+		plt.annotate('Paracaidas', xy=(7200, 34.82), xytext=(6300, 34.88),
+	            arrowprops=dict(facecolor='black', shrink=0.05),
+	            )
+		# #configure  Y axes
+		plt.ylim(min(blocks_dict[temperatures[num]]) - 0.02, max(blocks_dict[temperatures[num]]) + 0.02)
+		# #plt.yticks([20, 21, 20.5, 20.8])
+		# #show plot
 
-	plt.subplot(212)
-	plt.plot(x, y, linewidth=1.0, color="green")
-	xlabel('time (milliseconds)')
-	ylabel('temperature (C)')
-	title('Simple plot', fontsize=10)
-	grid(True)
-	#configure  X axes
-	plt.xticks(blocks_dict[fingerprints][::len(blocks_dict[fingerprints])/8])
-	plt.annotate('Despegue', xy=(2200, 34.82), xytext=(2300, 34.88),
-            arrowprops=dict(facecolor='black', shrink=0.05),
-            )
-	plt.annotate('Paracaidas', xy=(7200, 34.82), xytext=(6300, 34.88),
-            arrowprops=dict(facecolor='black', shrink=0.05),
-            )
-	#configure  Y axes
-	plt.ylim(min(blocks_dict[temperatures]) - 0.02, max(blocks_dict[temperatures]) + 0.02)
-	plt.suptitle('temperatures', fontsize=12)
-	plt.show()
+		# plt.subplot(212)
+		# plt.plot(x, y, linewidth=1.0, color="green")
+		# xlabel('time (milliseconds)')
+		# ylabel('temperature (C)')
+		# title('Simple plot', fontsize=10)
+		# grid(True)
+		# #configure  X axes
+		# plt.xticks(blocks_dict[fingerprints][::len(blocks_dict[fingerprints])/8])
+		# plt.annotate('Despegue', xy=(2200, 34.82), xytext=(2300, 34.88),
+	 #            arrowprops=dict(facecolor='black', shrink=0.05),
+	 #            )
+		# plt.annotate('Paracaidas', xy=(7200, 34.82), xytext=(6300, 34.88),
+	 #            arrowprops=dict(facecolor='black', shrink=0.05),
+	 #            )
+		# #configure  Y axes
+		# plt.ylim(min(blocks_dict[temperatures]) - 0.02, max(blocks_dict[temperatures]) + 0.02)
+		plt.suptitle('temperatures', fontsize=12)
+		plt.show()
 	
 #start = time.time()
 blocks, header = split_in_blocks(file_path, "m")
