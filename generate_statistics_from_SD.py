@@ -64,11 +64,45 @@ def manage_data_from_blocks(blocks, header):
 def process_data(blocks_dict):
 	fingerprints = []
 	temperatures = []
+	pressures = []
+	heights = []
+	accel_x = []
+	accel_y = []
+	accel_z = []
+	magn_x = []
+	magn_y = []
+	magn_z = []
+	gyro_x = []
+	gyro_y = []
+	gyro_z = []
 	for block in blocks_dict:
 		if block.startswith('f'):
 			fingerprints.append(block)
 		if block.startswith('t'):
 			temperatures.append(block)
+		if block.startswith('p')
+			pressures.append(block)
+		if block.startswith('h')
+			heights.append(block)
+		if block.startswith('ax'):
+			accel_x.append(block)
+		if block.startswith('ay'):
+			accel_y.append(block)
+		if block.startswith('az')
+			accel_z.append(block)
+		if block.startswith('mx'):
+			magn_x.append(block)
+		if block.startswith('my'):
+			magn_y.append(block)
+		if block.startswith('mz')
+			magn_z.append(block)
+		if block.startswith('gx'):
+			gyro_x.append(block)
+		if block.startswith('gy'):
+			gyro_y.append(block)
+		if block.startswith('gz')
+			gyro_z.append(block)
+	print blocks_dict.keys()	
 	fingerprint_basic_info = basic_process_fingerprints(fingerprints)
 	temp_basic_info = basic_process_temperatures(temperatures)
 	print_temp_evolution(fingerprints, temperatures)
@@ -133,7 +167,6 @@ def print_temp_evolution(fingerprints, temperatures):
 		axhspan(34.80, 34.82, facecolor='0.5', alpha=0.5, color="red")
 		plt.ylim(min(blocks_dict[temperatures[num]]) - 0.02, max(blocks_dict[temperatures[num]]) + 0.02)
 		plt.yticks(fontsize=8)
-		cid = canvas.mpl_connect('button_press_event', on_press)
 	plt.suptitle('temperatures in data', fontsize=12)
 	plt.show()
 	
