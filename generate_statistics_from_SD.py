@@ -129,8 +129,11 @@ def print_temp_evolution(fingerprints, temperatures):
 		plt.annotate('Paracaidas', xy=(7200, 34.82), xytext=(6300, 34.88),
 	            arrowprops=dict(facecolor='black', shrink=0.05),
 	            )
+		axvline(x=2200)
+		axhspan(34.80, 34.82, facecolor='0.5', alpha=0.5, color="red")
 		plt.ylim(min(blocks_dict[temperatures[num]]) - 0.02, max(blocks_dict[temperatures[num]]) + 0.02)
 		plt.yticks(fontsize=8)
+		cid = canvas.mpl_connect('button_press_event', on_press)
 	plt.suptitle('temperatures in data', fontsize=12)
 	plt.show()
 	
