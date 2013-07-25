@@ -1,4 +1,5 @@
 import fileinput
+import math
 import collections
 import time
 import numpy as np
@@ -110,44 +111,27 @@ def print_temp_evolution(fingerprints, temperatures):
 		x = blocks_dict[fingerprints[num]]
 		y = blocks_dict[temperatures[num]]
 		#subplot(nrows, ncols, plot_number)
-		plt.subplot(241)
+		nrows = int(math.ceil(float(len(fingerprints) / 4.0)))
+		ncols = 4
+		subplot_index = "%s%s%s" % (nrows, ncols, num + 1)
+		plt.subplot(subplot_index)
 
-		plt.plot(x, y, linewidth=1.0, marker="o", color="green")
-		xlabel('time (milliseconds)')
-		ylabel('temperature (C)')
-		title('Simple plot', fontsize=10)
+		plt.plot(x, y, linewidth=1.0, color="green")
+		xlabel('time (milliseconds)', fontsize = 8)
+		ylabel('temperature (C)', fontsize = 8)
+		#title('', fontsize=10)
 		grid(True)
-		# #configure  X axes
-		plt.xticks(blocks_dict[fingerprints[num]][::len(blocks_dict[fingerprints[num]])/10], rotation=0)
+		plt.xticks(blocks_dict[fingerprints[num]][::len(blocks_dict[fingerprints[num]])/10], rotation=30, fontsize=8)
 		plt.annotate('Despegue', xy=(2200, 34.82), xytext=(2300, 34.88),
 	            arrowprops=dict(facecolor='black', shrink=0.05),
 	            )
 		plt.annotate('Paracaidas', xy=(7200, 34.82), xytext=(6300, 34.88),
 	            arrowprops=dict(facecolor='black', shrink=0.05),
 	            )
-		# #configure  Y axes
 		plt.ylim(min(blocks_dict[temperatures[num]]) - 0.02, max(blocks_dict[temperatures[num]]) + 0.02)
-		# #plt.yticks([20, 21, 20.5, 20.8])
-		# #show plot
-
-		# plt.subplot(212)
-		# plt.plot(x, y, linewidth=1.0, color="green")
-		# xlabel('time (milliseconds)')
-		# ylabel('temperature (C)')
-		# title('Simple plot', fontsize=10)
-		# grid(True)
-		# #configure  X axes
-		# plt.xticks(blocks_dict[fingerprints][::len(blocks_dict[fingerprints])/8])
-		# plt.annotate('Despegue', xy=(2200, 34.82), xytext=(2300, 34.88),
-	 #            arrowprops=dict(facecolor='black', shrink=0.05),
-	 #            )
-		# plt.annotate('Paracaidas', xy=(7200, 34.82), xytext=(6300, 34.88),
-	 #            arrowprops=dict(facecolor='black', shrink=0.05),
-	 #            )
-		# #configure  Y axes
-		# plt.ylim(min(blocks_dict[temperatures]) - 0.02, max(blocks_dict[temperatures]) + 0.02)
-		plt.suptitle('temperatures', fontsize=12)
-		plt.show()
+		plt.yticks(fontsize=8)
+	plt.suptitle('temperatures', fontsize=12)
+	plt.show()
 	
 #start = time.time()
 blocks, header = split_in_blocks(file_path, "m")
