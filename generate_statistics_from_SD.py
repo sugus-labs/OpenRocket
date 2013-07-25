@@ -102,7 +102,7 @@ def process_data(blocks_dict):
 			gyro_y.append(block)
 		if block.startswith('gz')
 			gyro_z.append(block)
-	print blocks_dict.keys()	
+	#print blocks_dict.keys()	
 	fingerprint_basic_info = basic_process_fingerprints(fingerprints)
 	temp_basic_info = basic_process_temperatures(temperatures)
 	print_temp_evolution(fingerprints, temperatures)
