@@ -39,6 +39,7 @@ def manage_data_from_blocks(blocks, header):
 	Divide al the text in blocks tagged with their type of data (accelaration, temperature, ...) continued by a number of block
 	Return: A dict that contains all the different types of data diferentiated and numbered.
 	'''
+	# TODO: Automatize this function to accept more headers!!
 	blocks_dict = collections.OrderedDict()
 	for block_number, block in enumerate(blocks):
 		for item in header:
@@ -58,7 +59,6 @@ def manage_data_from_blocks(blocks, header):
 			blocks_dict['t%s' % block_number].append(float(line_list[10]))
 			blocks_dict['p%s' % block_number].append(int(line_list[11]))
 			blocks_dict['h%s' % block_number].append(float(line_list[12]))
-	#print blocks_dict.keys()
 	return blocks_dict
 
 def process_data(blocks_dict, header):
@@ -68,6 +68,7 @@ def process_data(blocks_dict, header):
 		for block in blocks_dict:
 			if block.startswith(header[num]):
 				block_list_header_based[num].append(block)
+				print "%s: %s" % (block, blocks_dict[block])
 	print block_list_header_based
 	#print blocks_dict.keys()	
 	fingerprint_basic_info = basic_process_fingerprints(fingerprints)
