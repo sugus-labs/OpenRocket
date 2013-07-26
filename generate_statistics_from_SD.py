@@ -68,14 +68,11 @@ def process_data(blocks_dict, header):
 		for block in blocks_dict:
 			if block.startswith(header[num]):
 				block_list_header_based[num].append(block)
-				print "%s: %s" % (block, blocks_dict[block])
-	print block_list_header_based
-	#print blocks_dict.keys()	
-	fingerprint_basic_info = basic_process_fingerprints(fingerprints)
-	temp_basic_info = basic_process_temperatures(temperatures)
-	print_temp_evolution(fingerprints, temperatures)
-	#print fingerprint_basic_info
-	#print temperatures_basic_info
+				# DEBUG! print "%s: %s" % (block, blocks_dict[block])
+	print block_list_header_based	
+	fingerprint_basic_info = basic_process_fingerprints(block_list_header_based[0])
+	temp_basic_info = basic_process_temperatures(block_list_header_based[1])
+	print_basic_evolution_2_axis(block_list_header_based[0], block_list_header_based[9])
 
 def basic_process_fingerprints(fingerprints):
 	fingerprint_basic_info = collections.OrderedDict()
@@ -107,13 +104,14 @@ def basic_process_temperatures(temperatures):
 		temp_basic_info[temp_block]["MIN"] = temp_min
 	return temp_basic_info
 
-def print_temp_evolution(fingerprints, temperatures):
+def print_basic_evolution_2_axis(x_axis_data_list, y_axis_data_list):
 	plt.figure(1)
-	for num in range(len(fingerprints)):
-		x = blocks_dict[fingerprints[num]]
-		y = blocks_dict[temperatures[num]]
+	for num in range(len(x_axis_data_list)):
+		x = blocks_dict[x_axis_data_list[num]]
+		print blocks_dict[y_axis_data_list[num]]
+		y = blocks_dict[y_axis_data_list[num]]
 		#subplot(nrows, ncols, plot_number)
-		nrows = int(math.ceil(float(len(fingerprints) / 3.0)))
+		nrows = int(math.ceil(float(len(x_axis_data_list) / 3.0)))
 		ncols = 3
 		subplot_index = "%s%s%s" % (nrows, ncols, num + 1)
 		plt.subplot(subplot_index)
@@ -123,17 +121,17 @@ def print_temp_evolution(fingerprints, temperatures):
 		ylabel('temperature (C)', fontsize = 8)
 		#title('', fontsize=10)
 		grid(True)
-		plt.xticks(blocks_dict[fingerprints[num]][::len(blocks_dict[fingerprints[num]])/10], rotation=30, fontsize=8)
-		plt.annotate('Despegue', xy=(2200, 34.82), xytext=(2300, 34.88),
-				bbox=dict(boxstyle="round", fc="0.8"),
-	            arrowprops=dict(facecolor='black', shrink=0.05),
-	            )
-		plt.annotate('Paracaidas', xy=(7200, 34.82), xytext=(6300, 34.88),
-	            arrowprops=dict(facecolor='black', shrink=0.05),
-	            )
-		axvline(x=2200)
-		axhspan(34.80, 34.82, facecolor='0.5', alpha=0.5, color="red")
-		plt.ylim(min(blocks_dict[temperatures[num]]) - 0.02, max(blocks_dict[temperatures[num]]) + 0.02)
+		plt.xticks(blocks_dict[x_axis_data_list[num]][::len(blocks_dict[x_axis_data_list[num]])/10], rotation=30, fontsize=8)
+		#plt.annotate('Despegue', xy=(2200, 34.82), xytext=(2300, 34.88),
+		#		bbox=dict(boxstyle="round", fc="0.8"),
+	    #        arrowprops=dict(facecolor='black', shrink=0.05),
+	    #        )
+		#plt.annotate('Paracaidas', xy=(7200, 34.82), xytext=(6300, 34.88),
+	    #        arrowprops=dict(facecolor='black', shrink=0.05),
+	    #        )
+		#axvline(x=2200)
+		#axhspan(34.80, 34.82, facecolor='0.5', alpha=0.5, color="red")
+		plt.ylim(min(blocks_dict[y_axis_data_list[num]]) - 0.02, max(blocks_dict[y_axis_data_list[num]]) + 0.02)
 		plt.yticks(fontsize=8)
 	plt.suptitle('temperatures in data', fontsize=12)
 	plt.show()
