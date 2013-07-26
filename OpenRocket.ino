@@ -587,6 +587,7 @@ float calcAltitude(float pressure, float temperature)
 {
   static float p0 = 0;
   static float pressArray[] = {0, 0, 0, 0, 0};
+  static float p0min = 0, p0max = 0;
   
   if (p0 == 0)
   {
@@ -595,10 +596,35 @@ float calcAltitude(float pressure, float temperature)
       if (pressArray[i] == 0)
       {
         pressArray[i] = pressure;
-        
+        if (p0min == 0 || p0min > pressure)
+        {
+          p0min = pressure;
+        }
+
+        if (p0max < pressure)
+        {
+          p0max = pressure;
+        }
+
         if (i == 4)
         {
-          p0 = (pressArray[0]+pressArray[1]+pressArray[2]+pressArray[3]+pressArray[4])/5;
+          for (int h = 0; h < 5; h++)
+          {
+            if (p0min == pressArray[h])
+            {
+              p0min == 0;
+            }
+            else if (p0max == pressArray[h])
+            {
+              p0max == 0;
+            }
+            else
+            {
+              p0 += pressArray[h];
+            }
+          }
+          
+          p0 /= 3;
         }
         break;
       }
