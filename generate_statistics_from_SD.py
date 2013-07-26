@@ -74,6 +74,7 @@ def process_data(blocks_dict, header):
 	temp_basic_info = basic_process_data(block_list_header_based[1])
 	height_basic_info = basic_process_data(block_list_header_based[12])
 	#print_basic_histograms(block_list_header_based[12])
+	#print_basic_scatters(block_list_header_based[12])
 	#print_basic_evolution_2_axis(block_list_header_based[0], block_list_header_based[12])
 
 def basic_process_only_for_fingerprints(fingerprints):
@@ -107,6 +108,7 @@ def basic_process_data(data_list):
 	return data_basic_info
 
 def print_basic_histograms(data_list):
+	#plt.ion()
 	plt.figure(1)
 	for num, data in enumerate(data_list):
 		nrows = int(math.ceil(float(len(data_list) / 3.0)))
@@ -118,6 +120,20 @@ def print_basic_histograms(data_list):
 		plt.ylabel("Frequency", fontsize=8)
 	plt.suptitle("Gaussian Histogram", fontsize=12)
 	plt.show()
+	#plt.show(block=True)
+
+def print_basic_scatters(data_list):
+	#plt.ion()
+	plt.figure(1)
+	for num, data in enumerate(data_list):
+		nrows = int(math.ceil(float(len(data_list) / 3.0)))
+		ncols = 3
+		subplot_index = "%s%s%s" % (nrows, ncols, num + 1)
+		plt.subplot(subplot_index)
+		plt.scatter(np.random.randn(1000), np.random.randn(1000))
+	plt.suptitle("Gaussian Histogram", fontsize=12)
+	plt.show()
+	#plt.show(block=True)
 
 def print_basic_evolution_2_axis(x_axis_data_list, y_axis_data_list):
 	plt.figure(1)
