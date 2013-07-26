@@ -70,11 +70,13 @@ def process_data(blocks_dict, header):
 				block_list_header_based[num].append(block)
 				# DEBUG! print "%s: %s" % (block, blocks_dict[block])
 	print block_list_header_based	
-	fingerprint_basic_info = basic_process_fingerprints(block_list_header_based[0])
-	temp_basic_info = basic_process_temperatures(block_list_header_based[1])
-	print_basic_evolution_2_axis(block_list_header_based[0], block_list_header_based[9])
+	fingerprint_basic_info = basic_process_only_for_fingerprints(block_list_header_based[0])
+	temp_basic_info = basic_process_data(block_list_header_based[1])
+	height_basic_info = basic_process_data(block_list_header_based[12])
+	#print_basic_histograms(block_list_header_based[12])
+	#print_basic_evolution_2_axis(block_list_header_based[0], block_list_header_based[12])
 
-def basic_process_fingerprints(fingerprints):
+def basic_process_only_for_fingerprints(fingerprints):
 	fingerprint_basic_info = collections.OrderedDict()
 	for fingerprint_block in fingerprints:
 		millis_interval_list = []	
@@ -92,23 +94,35 @@ def basic_process_fingerprints(fingerprints):
 		fingerprint_basic_info[fingerprint_block]["MIN"] = millis_min
 	return fingerprint_basic_info
 
-def basic_process_temperatures(temperatures):
-	temp_basic_info = collections.OrderedDict()
-	for temp_block in temperatures:
-		temp_basic_info[temp_block] = {}
-		temp_average = sum(blocks_dict[temp_block]) / len(blocks_dict[temp_block])
-		temp_basic_info[temp_block]["Av"] = "%.2f" % temp_average 
-		temp_max = max(blocks_dict[temp_block])
-		temp_basic_info[temp_block]["MAX"] = temp_max
-		temp_min = min(blocks_dict[temp_block])
-		temp_basic_info[temp_block]["MIN"] = temp_min
-	return temp_basic_info
+def basic_process_data(data_list):
+	data_basic_info = collections.OrderedDict()
+	for data_block in data_list:
+		data_basic_info[data_block] = {}
+		data_average = sum(blocks_dict[data_block]) / len(blocks_dict[data_block])
+		data_basic_info[data_block]["Av"] = "%.2f" % data_average 
+		data_max = max(blocks_dict[data_block])
+		data_basic_info[data_block]["MAX"] = data_max
+		data_min = min(blocks_dict[data_block])
+		data_basic_info[data_block]["MIN"] = data_min
+	return data_basic_info
+
+def print_basic_histograms(data_list):
+	plt.figure(1)
+	for num, data in enumerate(data_list):
+		nrows = int(math.ceil(float(len(data_list) / 3.0)))
+		ncols = 3
+		subplot_index = "%s%s%s" % (nrows, ncols, num + 1)
+		plt.subplot(subplot_index)
+		plt.hist(blocks_dict[data], bins=20)
+		plt.xlabel("Value", fontsize=8)
+		plt.ylabel("Frequency", fontsize=8)
+	plt.suptitle("Gaussian Histogram", fontsize=12)
+	plt.show()
 
 def print_basic_evolution_2_axis(x_axis_data_list, y_axis_data_list):
 	plt.figure(1)
 	for num in range(len(x_axis_data_list)):
 		x = blocks_dict[x_axis_data_list[num]]
-		print blocks_dict[y_axis_data_list[num]]
 		y = blocks_dict[y_axis_data_list[num]]
 		#subplot(nrows, ncols, plot_number)
 		nrows = int(math.ceil(float(len(x_axis_data_list) / 3.0)))
@@ -118,7 +132,7 @@ def print_basic_evolution_2_axis(x_axis_data_list, y_axis_data_list):
 
 		plt.plot(x, y, linewidth=1.0, color="green")
 		xlabel('time (milliseconds)', fontsize = 8)
-		ylabel('temperature (C)', fontsize = 8)
+		#ylabel('temperature (C)', fontsize = 8)
 		#title('', fontsize=10)
 		grid(True)
 		plt.xticks(blocks_dict[x_axis_data_list[num]][::len(blocks_dict[x_axis_data_list[num]])/10], rotation=30, fontsize=8)
@@ -133,7 +147,7 @@ def print_basic_evolution_2_axis(x_axis_data_list, y_axis_data_list):
 		#axhspan(34.80, 34.82, facecolor='0.5', alpha=0.5, color="red")
 		plt.ylim(min(blocks_dict[y_axis_data_list[num]]) - 0.02, max(blocks_dict[y_axis_data_list[num]]) + 0.02)
 		plt.yticks(fontsize=8)
-	plt.suptitle('temperatures in data', fontsize=12)
+	#plt.suptitle('temperatures in data', fontsize=12)
 	plt.show()
 	
 #start = time.time()
