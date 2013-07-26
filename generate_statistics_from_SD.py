@@ -61,47 +61,14 @@ def manage_data_from_blocks(blocks, header):
 	#print blocks_dict.keys()
 	return blocks_dict
 
-def process_data(blocks_dict):
-	fingerprints = []
-	temperatures = []
-	pressures = []
-	heights = []
-	accel_x = []
-	accel_y = []
-	accel_z = []
-	magn_x = []
-	magn_y = []
-	magn_z = []
-	gyro_x = []
-	gyro_y = []
-	gyro_z = []
-	for block in blocks_dict:
-		if block.startswith('f'):
-			fingerprints.append(block)
-		if block.startswith('t'):
-			temperatures.append(block)
-		if block.startswith('p')
-			pressures.append(block)
-		if block.startswith('h')
-			heights.append(block)
-		if block.startswith('ax'):
-			accel_x.append(block)
-		if block.startswith('ay'):
-			accel_y.append(block)
-		if block.startswith('az')
-			accel_z.append(block)
-		if block.startswith('mx'):
-			magn_x.append(block)
-		if block.startswith('my'):
-			magn_y.append(block)
-		if block.startswith('mz')
-			magn_z.append(block)
-		if block.startswith('gx'):
-			gyro_x.append(block)
-		if block.startswith('gy'):
-			gyro_y.append(block)
-		if block.startswith('gz')
-			gyro_z.append(block)
+def process_data(blocks_dict, header):
+	block_list_header_based = []
+	for num, item in enumerate(header):
+		block_list_header_based.append([])
+		for block in blocks_dict:
+			if block.startswith(header[num]):
+				block_list_header_based[num].append(block)
+	print block_list_header_based
 	#print blocks_dict.keys()	
 	fingerprint_basic_info = basic_process_fingerprints(fingerprints)
 	temp_basic_info = basic_process_temperatures(temperatures)
@@ -173,7 +140,7 @@ def print_temp_evolution(fingerprints, temperatures):
 #start = time.time()
 blocks, header = split_in_blocks(file_path, "m")
 blocks_dict = manage_data_from_blocks(blocks, header)
-process_data(blocks_dict)
+process_data(blocks_dict, header)
 
 #stop = time.time()
 #total_time = stop -start
