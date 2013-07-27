@@ -71,8 +71,8 @@ def process_data(blocks_dict, header):
 				block_list_header_based[num].append(block)
 				# DEBUG! print "%s: %s" % (block, blocks_dict[block])
 	print block_list_header_based	
-	fingerprint_basic_info = basic_process_only_for_fingerprints(block_list_header_based[0])
-	temp_basic_info = basic_process_data(block_list_header_based[1])
+	#fingerprint_basic_info = basic_process_only_for_fingerprints(block_list_header_based[0])
+	temp_basic_info = basic_process_data(block_list_header_based[12])
 	#height_basic_info = basic_process_data(block_list_header_based[12])
 	#print_basic_histograms(block_list_header_based[12])
 	#print_basic_scatters(block_list_header_based[12])
@@ -113,14 +113,16 @@ def basic_process_data(data_list):
 		print "MAX OWN %s: %s" % (data_block, data_max)	
 		data_basic_info[data_block]["MAX"] = data_max
 		data_min = min(blocks_dict[data_block])
-		data_amin = np.amax(blocks_dict[data_block])
+		data_amin = np.amin(blocks_dict[data_block])
 		print "MIN NUMPY %s: %s" % (data_block, data_amin)
 		print "MIN OWN %s: %s" % (data_block, data_min)
 		data_basic_info[data_block]["MIN"] = data_min
 		data_median = np.median(blocks_dict[data_block])
-		print "MEDIAN %s: %s" % (data_block, data_median)
+		print "MEDIAN NUMPY %s: %s" % (data_block, data_median)
 		data_std = np.std(blocks_dict[data_block])
-		print "STANDARD DEVIATION %s: %s" % (data_block, data_std)
+		print "STANDARD DEVIATION NUMPY %s: %s" % (data_block, data_std)
+		data_ptp = np.ptp(blocks_dict[data_block])
+		print "RANGE OF VALUES NUMPY %s: %s" % (data_block, data_ptp)
 	return data_basic_info
 
 def print_basic_histograms(data_list):
@@ -132,6 +134,8 @@ def print_basic_histograms(data_list):
 		subplot_index = "%s%s%s" % (nrows, ncols, num + 1)
 		plt.subplot(subplot_index)
 		plt.hist(blocks_dict[data], bins=20)
+		#data_new = np.histogramdd(blocks_dict[data])
+		#plt.hist(data_new, bins=20)
 		plt.xlabel("Value", fontsize=8)
 		plt.ylabel("Frequency", fontsize=8)
 	plt.suptitle("Gaussian Histogram", fontsize=12)
