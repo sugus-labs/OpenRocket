@@ -71,7 +71,7 @@ def process_data(blocks_dict, header):
 				block_list_header_based[num].append(block)
 				# DEBUG! print "%s: %s" % (block, blocks_dict[block])
 	print block_list_header_based	
-	#fingerprint_basic_info = basic_process_only_for_fingerprints(block_list_header_based[0])
+	fingerprint_basic_info = basic_process_only_for_fingerprints(block_list_header_based[0])
 	temp_basic_info = basic_process_data(block_list_header_based[12])
 	#height_basic_info = basic_process_data(block_list_header_based[12])
 
@@ -81,20 +81,17 @@ def process_data(blocks_dict, header):
 
 def basic_process_only_for_fingerprints(fingerprints):
 	fingerprint_basic_info = collections.OrderedDict()
-	for fingerprint_block in fingerprints:
+	fingerprint_list = []
+	for num, fingerprint_block in enumerate(fingerprints):
 		millis_interval_list = []	
 		for position, millis in enumerate(blocks_dict[fingerprint_block]):
 		 	if position != 0:
 		 		millis_interval = millis - millis_prev
 		 		millis_interval_list.append(millis_interval)
 		 	millis_prev = millis
-		fingerprint_basic_info[fingerprint_block] = {}
-		millis_average = sum(millis_interval_list) / len(blocks_dict[fingerprint_block])
-		fingerprint_basic_info[fingerprint_block]["Av"] = millis_average
-		millis_max = max(millis_interval_list)
-		fingerprint_basic_info[fingerprint_block]["MAX"] = millis_max
-		millis_min = min(millis_interval_list)
-		fingerprint_basic_info[fingerprint_block]["MIN"] = millis_min
+		blocks_dict["fp%s" % (num)] = millis_interval_list
+		fingerprint_list.append("fp%s" % (num))
+	fingerprint_basic_info = basic_process_data(fingerprint_list)
 	return fingerprint_basic_info
 
 def basic_process_data(data_list):
@@ -111,7 +108,8 @@ def basic_process_data(data_list):
 		data_basic_info[data_block] = {"AVM" : "%.3f" % data_avg_mean, "AVW" : "%.3f" % data_avg_weighted, "MAX" : "%.3f" % data_amax,
 										"MIN" : "%.3f" % data_amin, "MED" : "%.3f" % data_med, "STD" : "%.3f" % data_std, 
 										"PTP" : "%.3f" % data_ptp}
-	print data_basic_info
+	for key in data_basic_info:
+		print data_basic_info[key]
 	return data_basic_info
 
 def print_basic_histograms(data_list):
