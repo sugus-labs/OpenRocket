@@ -7,7 +7,7 @@ from pylab import *
 from matplotlib import pyplot as plt
 
 #file_path = '/media/ABB4-4F3A/DATALOG.TXT'
-file_path = '/home/gustavo/Documents/DATALOG.TXT'
+file_path = 'DATALOG.TXT'
 
 def split_in_blocks(txt_file, pattern):
 	'''
