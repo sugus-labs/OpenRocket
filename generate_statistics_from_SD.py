@@ -74,6 +74,7 @@ def process_data(blocks_dict, header):
 	#fingerprint_basic_info = basic_process_only_for_fingerprints(block_list_header_based[0])
 	temp_basic_info = basic_process_data(block_list_header_based[12])
 	#height_basic_info = basic_process_data(block_list_header_based[12])
+
 	#print_basic_histograms(block_list_header_based[12])
 	#print_basic_scatters(block_list_header_based[12])
 	#print_basic_evolution_2_axis(block_list_header_based[0], block_list_header_based[12])
@@ -100,29 +101,17 @@ def basic_process_data(data_list):
 	data_basic_info = collections.OrderedDict()
 	for data_block in data_list:
 		data_basic_info[data_block] = {}
-		data_average = sum(blocks_dict[data_block]) / len(blocks_dict[data_block])
 		data_avg_mean = np.mean(blocks_dict[data_block])
-		print "AVERAGE ARITMETHIC NUMPY %s: %s" % (data_block, data_avg_mean)
-		print "AVERAGE ARITMETHIC OWN %s: %s" % (data_block, data_average)
-		data_avg_weighted = np.average(blocks_dict[data_block])
-		print "AVERAGE WEIGHTED NUMPY %s: %s" % (data_block, data_avg_weighted)		
-		data_basic_info[data_block]["Av"] = "%.2f" % data_average 
-		data_max = max(blocks_dict[data_block])
+		data_avg_weighted = np.average(blocks_dict[data_block])	 
 		data_amax = np.amax(blocks_dict[data_block])
-		print "MAX NUMPY %s: %s" % (data_block, data_amax)
-		print "MAX OWN %s: %s" % (data_block, data_max)	
-		data_basic_info[data_block]["MAX"] = data_max
-		data_min = min(blocks_dict[data_block])
 		data_amin = np.amin(blocks_dict[data_block])
-		print "MIN NUMPY %s: %s" % (data_block, data_amin)
-		print "MIN OWN %s: %s" % (data_block, data_min)
-		data_basic_info[data_block]["MIN"] = data_min
-		data_median = np.median(blocks_dict[data_block])
-		print "MEDIAN NUMPY %s: %s" % (data_block, data_median)
+		data_med = np.median(blocks_dict[data_block])
 		data_std = np.std(blocks_dict[data_block])
-		print "STANDARD DEVIATION NUMPY %s: %s" % (data_block, data_std)
 		data_ptp = np.ptp(blocks_dict[data_block])
-		print "RANGE OF VALUES NUMPY %s: %s" % (data_block, data_ptp)
+		data_basic_info[data_block] = {"AVM" : "%.3f" % data_avg_mean, "AVW" : "%.3f" % data_avg_weighted, "MAX" : "%.3f" % data_amax,
+										"MIN" : "%.3f" % data_amin, "MED" : "%.3f" % data_med, "STD" : "%.3f" % data_std, 
+										"PTP" : "%.3f" % data_ptp}
+	print data_basic_info
 	return data_basic_info
 
 def print_basic_histograms(data_list):
