@@ -101,7 +101,6 @@ const float magn_ellipsoid_transform[3][3] = {{0.902, -0.00354, 0.000636}, {-0.0
 #define DEBUG__PRINT_LOOP_TIME false
 
 /****************** BMP085  *********************/
-
 #define BMP085_ADDRESS 0x77  // I2C address of BMP085
 
 const unsigned char OSS = 0;  // Oversampling Setting
@@ -117,18 +116,19 @@ int b2;
 int mb;
 int mc;
 int md;
-// b5 is calculated in bmp085GetTemperature(...), this variable is also used in bmp085GetPressure(...)
-// so ...Temperature(...) must be called before ...Pressure(...).
 long b5; 
 float temperature;
 float pressure;
 float atm; // "standard atmosphere"
 float alti; 
-
 /*****************************************************************/
 
 #include <Wire.h>
 #include <SD.h>
+Servo myservo;
+ 
+int pos = 0;
+int servoPin = 9;
 
 // Sensor calibration scale and offset values
 #define ACCEL_X_OFFSET ((ACCEL_X_MIN + ACCEL_X_MAX) / 2.0f)
@@ -353,6 +353,8 @@ void setup()
   
   turn_output_stream_on();
   //turn_output_stream_off();
+
+  myservo.attach(servoPin);
 }
 
 void loop()
