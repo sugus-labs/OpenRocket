@@ -5,6 +5,7 @@ import time
 import numpy as np
 from pylab import *
 from matplotlib import pyplot as plt
+import matplotlib.mlab as mlab
 
 #file_path = '/media/ABB4-4F3A/DATALOG.TXT'
 file_path = 'DATALOG.TXT'
@@ -71,7 +72,7 @@ def process_data(blocks_dict, header):
 				block_list_header_based[num].append(block)
 				# DEBUG! print "%s: %s" % (block, blocks_dict[block])
 	print block_list_header_based	
-	fingerprint_basic_info = basic_process_only_for_fingerprints(block_list_header_based[0])
+	#fingerprint_basic_info = basic_process_only_for_fingerprints(block_list_header_based[0])
 	temp_basic_info = basic_process_data(block_list_header_based[12])
 	#height_basic_info = basic_process_data(block_list_header_based[12])
 
@@ -98,16 +99,23 @@ def basic_process_data(data_list):
 	data_basic_info = collections.OrderedDict()
 	for data_block in data_list:
 		data_basic_info[data_block] = {}
-		data_avg_mean = np.mean(blocks_dict[data_block])
-		data_avg_weighted = np.average(blocks_dict[data_block])	 
-		data_amax = np.amax(blocks_dict[data_block])
-		data_amin = np.amin(blocks_dict[data_block])
-		data_med = np.median(blocks_dict[data_block])
-		data_std = np.std(blocks_dict[data_block])
-		data_ptp = np.ptp(blocks_dict[data_block])
+		data_avg_mean = np.mean(blocks_dict[data_block])		# Average 
+		data_avg_weighted = np.average(blocks_dict[data_block])	# Average weighted
+		data_amax = np.amax(blocks_dict[data_block])			# MAX
+		data_amin = np.amin(blocks_dict[data_block])			# MIN
+		data_med = np.median(blocks_dict[data_block])			# Median
+		data_std = np.std(blocks_dict[data_block])				# Standard deviation
+		data_ptp = np.ptp(blocks_dict[data_block])				# Distance MAX to MIN
+		data_var = np.var(blocks_dict[data_block])				# Variance
 		data_basic_info[data_block] = {"AVM" : "%.3f" % data_avg_mean, "AVW" : "%.3f" % data_avg_weighted, "MAX" : "%.3f" % data_amax,
 										"MIN" : "%.3f" % data_amin, "MED" : "%.3f" % data_med, "STD" : "%.3f" % data_std, 
-										"PTP" : "%.3f" % data_ptp}
+										"PTP" : "%.3f" % data_ptp, "VAR" : "%.3f" % data_var}
+		# PLOT NORMAL PDF FROM THA DATA
+		#sigma = sqrt(data_var)
+		#x = np.linspace(data_amin,data_amax)
+		#plt.plot(x,mlab.normpdf(x,data_avg_mean,sigma))
+
+		plt.show()
 	for key in data_basic_info:
 		print data_basic_info[key]
 	return data_basic_info
