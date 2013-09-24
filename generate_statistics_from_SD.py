@@ -25,7 +25,7 @@ def split_in_blocks(txt_file, pattern):
 	blocks_of_data = []
 	with open(txt_file) as f:
 		lines = f.readlines()
-		for num_header_line in num_times_find_pattern: 
+		for num_header_line in num_times_find_pattern:
 			if num_header_line == 0:
 				num_header_line_prev = num_header_line
 			else:
@@ -71,20 +71,20 @@ def process_data(blocks_dict, header):
 			if block.startswith(header[num]):
 				block_list_header_based[num].append(block)
 				# DEBUG! print "%s: %s" % (block, blocks_dict[block])
-	print block_list_header_based	
+	print block_list_header_based
 	#fingerprint_basic_info = basic_process_only_for_fingerprints(block_list_header_based[0])
 	temp_basic_info = basic_process_data(block_list_header_based[12])
 	#height_basic_info = basic_process_data(block_list_header_based[12])
 
-	#print_basic_histograms(block_list_header_based[12])
-	#print_basic_scatters(block_list_header_based[12])
-	#print_basic_evolution_2_axis(block_list_header_based[0], block_list_header_based[12])
+	print_basic_histograms(block_list_header_based[12])
+	print_basic_scatters(block_list_header_based[12])
+	print_basic_evolution_2_axis(block_list_header_based[0], block_list_header_based[12])
 
 def basic_process_only_for_fingerprints(fingerprints):
 	fingerprint_basic_info = collections.OrderedDict()
 	fingerprint_list = []
 	for num, fingerprint_block in enumerate(fingerprints):
-		millis_interval_list = []	
+		millis_interval_list = []
 		for position, millis in enumerate(blocks_dict[fingerprint_block]):
 		 	if position != 0:
 		 		millis_interval = millis - millis_prev
@@ -99,7 +99,7 @@ def basic_process_data(data_list):
 	data_basic_info = collections.OrderedDict()
 	for data_block in data_list:
 		data_basic_info[data_block] = {}
-		data_avg_mean = np.mean(blocks_dict[data_block])		# Average 
+		data_avg_mean = np.mean(blocks_dict[data_block])		# Average
 		data_avg_weighted = np.average(blocks_dict[data_block])	# Average weighted
 		data_amax = np.amax(blocks_dict[data_block])			# MAX
 		data_amin = np.amin(blocks_dict[data_block])			# MIN
@@ -108,7 +108,7 @@ def basic_process_data(data_list):
 		data_ptp = np.ptp(blocks_dict[data_block])				# Distance MAX to MIN
 		data_var = np.var(blocks_dict[data_block])				# Variance
 		data_basic_info[data_block] = {"AVM" : "%.3f" % data_avg_mean, "AVW" : "%.3f" % data_avg_weighted, "MAX" : "%.3f" % data_amax,
-										"MIN" : "%.3f" % data_amin, "MED" : "%.3f" % data_med, "STD" : "%.3f" % data_std, 
+										"MIN" : "%.3f" % data_amin, "MED" : "%.3f" % data_med, "STD" : "%.3f" % data_std,
 										"PTP" : "%.3f" % data_ptp, "VAR" : "%.3f" % data_var}
 		# PLOT NORMAL PDF FROM THA DATA
 		#sigma = sqrt(data_var)
@@ -180,7 +180,7 @@ def print_basic_evolution_2_axis(x_axis_data_list, y_axis_data_list):
 		plt.yticks(fontsize=8)
 	#plt.suptitle('temperatures in data', fontsize=12)
 	plt.show()
-	
+
 #start = time.time()
 blocks, header = split_in_blocks(file_path, "m")
 blocks_dict = manage_data_from_blocks(blocks, header)

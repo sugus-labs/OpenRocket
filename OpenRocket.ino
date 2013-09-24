@@ -125,6 +125,7 @@ float alti;
 
 #include <Wire.h>
 #include <SD.h>
+#include <Servo.h>...................................................................
 Servo myservo;
  
 int pos = 0;
@@ -313,6 +314,23 @@ char readChar()
   return Serial.read();
 }
 
+void initialiseServo()
+{
+  Serial.println("Initialising servo");
+  myservo.write(0);
+  delay(1000);
+  if (myservo.read() == 0)
+  {
+    myservo.write(180);
+  }
+  delay(1000);
+  if (myservo.read() == 180)
+  {
+    myservo.write(0);
+    Serial.println("Servo initialized");
+  }
+}
+
 File dataFile;
 String dataString = "";
 String header;
@@ -340,9 +358,12 @@ void setup()
   delay(20);  // Give sensors enough time to collect data
   reset_sensor_fusion();
   
+  myservo.attach(servoPin);
+  initialiseServo();
+  
   pinMode(10, OUTPUT);
    
-  if (!SD.begin(4)) {
+  if (!SD.begin()) {
     Serial.println("SD initialization failed!");
     return;
   }
@@ -353,8 +374,6 @@ void setup()
   
   turn_output_stream_on();
   //turn_output_stream_off();
-
-  myservo.attach(servoPin);
 }
 
 void loop()
@@ -368,6 +387,7 @@ void loop()
     }  
     else {
       Serial.println("error opening datalog.txt");
+      delay(1000);
     }
     if (timestamp > timestamp_old)
       G_Dt = (float) (timestamp - timestamp_old) / 1000.0f; // Real time of loop run. We use this on the DCM algorithm (gyro integration time)
@@ -401,6 +421,7 @@ void loop()
     // if the file isn't open, pop up an error:
     else {
       Serial.println("error opening datalog.txt");
+      delay(1000);
     }
     to_save ++;
   } 
