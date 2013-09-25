@@ -120,7 +120,13 @@ long b5;
 float temperature;
 float pressure;
 float atm; // "standard atmosphere"
-float alti; 
+float alti;
+
+//Status
+boolean is_launched = false;
+boolean descent = false;
+boolean parachute = false;
+boolean touchdown = false;
 /*****************************************************************/
 
 #include <Wire.h>
@@ -370,25 +376,33 @@ void setup()
   Serial.println("SD initiated!.");
   dataFile = SD.open("datalog.txt", FILE_WRITE);
   //dataFile.println("milliseconds, accel[0], accel[1], accel[2], magnetom[0], magnetom[1], magnetom[2], gyro[0], gyro[1], gyro[2], temperature, pressure, altitude");
-  dataFile.println("f,ax,ay,az,mx,my,mz,gx,gy,gz,t,p,h");
-  
-  turn_output_stream_on();
-  //turn_output_stream_off();
+  if (dataFile) {
+      dataFile.println("f,ax,ay,az,mx,my,mz,gx,gy,gz,t,p,h");
+        
+      turn_output_stream_on();
+    //turn_output_stream_off();
+  }  
+  else {
+    Serial.println("error opening datalog.txt");
+    delay(1000);
+  }
 }
 
 void loop()
 {
+  Calculate_Events();
+  
+  Serial.println((vector_module(accel)*0.04205)/9.8-1);
+  delay(100);
+  
   if((millis() - timestamp) >= OUTPUT__DATA_INTERVAL)
   {
     timestamp_old = timestamp;
     timestamp = millis();
     if (dataFile) {
       dataFile.print(timestamp); dataFile.print(",");
-    }  
-    else {
-      Serial.println("error opening datalog.txt");
-      delay(1000);
     }
+
     if (timestamp > timestamp_old)
       G_Dt = (float) (timestamp - timestamp_old) / 1000.0f; // Real time of loop run. We use this on the DCM algorithm (gyro integration time)
     else G_Dt = 0;
@@ -417,11 +431,6 @@ void loop()
       dataFile.print(pressure, 0); dataFile.print(",");
       //dataFile.print(atm, 4); dataFile.print(",");
       dataFile.print(alti, 2); dataFile.println();
-    }  
-    // if the file isn't open, pop up an error:
-    else {
-      Serial.println("error opening datalog.txt");
-      delay(1000);
     }
     to_save ++;
   } 
@@ -538,7 +547,8 @@ int bmp085ReadInt(unsigned char address)
 }
 
 // Read the uncompensated temperature value
-unsigned int bmp085ReadUT(){
+unsigned int bmp085ReadUT()
+{
   unsigned int ut;
 
   // Write 0x2E into Register 0xF4
@@ -557,8 +567,8 @@ unsigned int bmp085ReadUT(){
 }
 
 // Read the uncompensated pressure value
-unsigned long bmp085ReadUP(){
-
+unsigned long bmp085ReadUP()
+{
   unsigned char msb, lsb, xlsb;
   unsigned long up = 0;
 
@@ -582,7 +592,8 @@ unsigned long bmp085ReadUP(){
   return up;
 }
 
-void writeRegister(int deviceAddress, byte address, byte val) {
+void writeRegister(int deviceAddress, byte address, byte val)
+{
   Wire.beginTransmission(deviceAddress); // start transmission to device 
   Wire.write(address);       // send register address
   Wire.write(val);         // send value to write

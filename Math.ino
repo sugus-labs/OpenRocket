@@ -87,3 +87,8 @@ void init_rotation_matrix(float m[3][3], float yaw, float pitch, float roll)
   m[2][1] = c2 * s1;
   m[2][2] = c1 * c2;
 }
+
+float vector_module(float v[3])
+{
+  return sqrt(pow(v[0], 2)+pow(v[1], 2)+pow(v[2], 2));
+}
