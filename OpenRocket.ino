@@ -8,7 +8,7 @@
 */
 
 #define HW__VERSION_CODE 10724 // SparkFun "9DOF Sensor Stick" version "SEN-10724" (HMC5883L magnetometer)
-#define OUTPUT__BAUD_RATE 57600
+#define OUTPUT__BAUD_RATE 9600
 #define OUTPUT__DATA_INTERVAL 20  // in milliseconds
 #define WRITE__DATA_INTERVAL 1000  // in milliseconds
 
@@ -32,12 +32,12 @@ boolean output_errors = false;  // true or false
 // Put MIN/MAX and OFFSET readings for your board here!
 // Accelerometer
 // "accel x,y,z (min/max) = X_MIN/X_MAX  Y_MIN/Y_MAX  Z_MIN/Z_MAX"
-#define ACCEL_X_MIN ((float) -250)
-#define ACCEL_X_MAX ((float) 250)
-#define ACCEL_Y_MIN ((float) -250)
-#define ACCEL_Y_MAX ((float) 250)
-#define ACCEL_Z_MIN ((float) -250)
-#define ACCEL_Z_MAX ((float) 250)
+#define ACCEL_X_MIN ((float) -268)
+#define ACCEL_X_MAX ((float) 260)
+#define ACCEL_Y_MIN ((float) -256)
+#define ACCEL_Y_MAX ((float) 272)
+#define ACCEL_Z_MIN ((float) -281)
+#define ACCEL_Z_MAX ((float) 238)
 
 // Magnetometer (standard calibration)
 // "magn x,y,z (min/max) = X_MIN/X_MAX  Y_MIN/Y_MAX  Z_MIN/Z_MAX"
