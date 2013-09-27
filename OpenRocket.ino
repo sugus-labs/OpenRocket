@@ -8,7 +8,7 @@
 */
 
 #define HW__VERSION_CODE 10724 // SparkFun "9DOF Sensor Stick" version "SEN-10724" (HMC5883L magnetometer)
-#define OUTPUT__BAUD_RATE 9600
+#define OUTPUT__BAUD_RATE 115200
 #define OUTPUT__DATA_INTERVAL 20  // in milliseconds
 #define WRITE__DATA_INTERVAL 1000  // in milliseconds
 
@@ -41,12 +41,12 @@ boolean output_errors = false;  // true or false
 
 // Magnetometer (standard calibration)
 // "magn x,y,z (min/max) = X_MIN/X_MAX  Y_MIN/Y_MAX  Z_MIN/Z_MAX"
-#define MAGN_X_MIN ((float) -600)
-#define MAGN_X_MAX ((float) 600)
-#define MAGN_Y_MIN ((float) -600)
-#define MAGN_Y_MAX ((float) 600)
-#define MAGN_Z_MIN ((float) -600)
-#define MAGN_Z_MAX ((float) 600)
+#define MAGN_X_MIN ((float) -250)
+#define MAGN_X_MAX ((float) 354)
+#define MAGN_Y_MIN ((float) -420)
+#define MAGN_Y_MAX ((float) 220)
+#define MAGN_Z_MIN ((float) -400)
+#define MAGN_Z_MAX ((float) 248)
 
 // Magnetometer (extended calibration)
 // Uncommend to use extended magnetometer calibration (compensates hard & soft iron errors)
@@ -56,9 +56,9 @@ boolean output_errors = false;  // true or false
 
 // Gyroscope
 // "gyro x,y,z (current/average) = .../OFFSET_X  .../OFFSET_Y  .../OFFSET_Z
-#define GYRO_AVERAGE_OFFSET_X ((float) 0.0)
-#define GYRO_AVERAGE_OFFSET_Y ((float) 0.0)
-#define GYRO_AVERAGE_OFFSET_Z ((float) 0.0)
+#define GYRO_AVERAGE_OFFSET_X ((float) 21.86)
+#define GYRO_AVERAGE_OFFSET_Y ((float) -31.37)
+#define GYRO_AVERAGE_OFFSET_Z ((float) -5.04)
 
 /*
 // Calibration example:
@@ -392,7 +392,7 @@ void loop()
 {
   Calculate_Events();
   
-  Serial.println((vector_module(accel)*0.04205)/9.8-1);
+  Serial.println((vector_module(accel)*0.04205)/9.8);
   delay(100);
   
   if((millis() - timestamp) >= OUTPUT__DATA_INTERVAL)
