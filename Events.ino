@@ -21,15 +21,42 @@ void Calculate_Events()
 
 void calLaunch()
 {
-  if (vector_module(accel) > 500) //TODO new values with new resolution
+  if (!is_launched && vector_module(accel) > 500) //TODO new values with new resolution
   {
     is_launched = true;
+    launch = millis();
     Serial.println("Launch!!");
-    //TODO change resolution
+    //TODO change accelerometer resolution
   }
 }
 
-void calTrajSec(){}
-void calDescent(){}
-void dplParachute(){}
-void calTouchdown(){}
+void calTrajSec()
+{
+  //TODO
+}
+
+void calDescent()
+{
+  if (!descent && millis() > launch + 5000)
+  {
+    descent = true;
+    descentStart = millis();
+  }
+  //TODO
+}
+
+void dplParachute()
+{
+  if (!parachute && millis() > descentStart + 500)
+  {
+    myservo.write(180);
+    parachute = true;
+    parachuteDepl = millis();
+  }
+  //TODO
+}
+
+void calTouchdown()
+{
+  //TODO
+}

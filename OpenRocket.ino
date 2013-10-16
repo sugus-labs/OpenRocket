@@ -127,6 +127,12 @@ boolean is_launched = false;
 boolean descent = false;
 boolean parachute = false;
 boolean touchdown = false;
+
+//Timing
+unsigned long launch;
+unsigned long descentStart;
+unsigned long parachuteDepl;
+unsigned long touchTime;
 /*****************************************************************/
 
 #include <Wire.h>
@@ -182,6 +188,8 @@ float magnetom_tmp[3];
 float gyro[3];
 float gyro_average[3];
 int gyro_num_samples = 0;
+
+int acc_res = 16;
 
 // DCM variables
 float MAG_Heading;
@@ -392,8 +400,10 @@ void loop()
 {
   Calculate_Events();
   
-  Serial.println((vector_module(accel)*0.04205)/9.8);
-  delay(100);
+  if (millis() % 20 == 0)
+  {
+    Serial.println((vector_module(accel)*0.021025)/9.8);
+  }
   
   if((millis() - timestamp) >= OUTPUT__DATA_INTERVAL)
   {
@@ -408,6 +418,7 @@ void loop()
     else G_Dt = 0;
 
     // Update sensor readings
+    updateResolution();
     read_sensors();
     output_sensors();
     
@@ -416,20 +427,13 @@ void loop()
     // BMP085
     temperature = bmp085GetTemperature(bmp085ReadUT());
     pressure = bmp085GetPressure(bmp085ReadUP());
-    //atm = pressure / 101325;
-    alti = calcAltitude(pressure, getKelvin(temperature));
-    //dtostrf(floatVar, minStringWidthIncDecimalPoint, numVarsAfterDecimal, charBuf);
-    //Serial.print("Time: "); Serial.println(timestamp);
-    //Serial.print("Temp: "); Serial.print(temperature, 2); Serial.println(" C");
-    //Serial.print("Pres: "); Serial.print(pressure, 0); Serial.println(" Pa");
-    //Serial.print("Atm: "); Serial.println(atm, 4);
-    //Serial.print("Alt: "); Serial.print(alti, 2); Serial.println(" M");
-    //Serial.println();
 
-    if (dataFile) {
+    alti = calcAltitude(pressure, getKelvin(temperature));
+
+    if (dataFile)
+    {
       dataFile.print(temperature, 2); dataFile.print(",");
       dataFile.print(pressure, 0); dataFile.print(",");
-      //dataFile.print(atm, 4); dataFile.print(",");
       dataFile.print(alti, 2); dataFile.println();
     }
     to_save ++;
@@ -440,6 +444,20 @@ void loop()
     to_save = 0;
     dataFile.close();
     dataFile = SD.open("datalog.txt", FILE_WRITE);
+  }
+}
+
+void updateResolution()
+{
+  if (false)
+  {
+   // if
+    
+//    Wire.beginTransmission(ACCEL_ADDRESS);
+//    WIRE_SEND(0x31);  // Data format register
+//    WIRE_SEND(0x08|res);  // Set to full resolution
+//    Wire.endTransmission();
+//    delay(5);
   }
 }
 
