@@ -3,6 +3,8 @@ OpenRocket
 
 Open platform for Rocket ECUs based on Razor AHRS Firmware from Q&U Lab.
 
+> **NOTE:** The actual version is 0.2. We are hardly under development
+
 Rocket
 ![rocket](https://raw.github.com/gmartinvela/OpenRocket/master/images/openrocket_body.png)
 
