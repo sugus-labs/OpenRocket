@@ -15,8 +15,18 @@ headers = {
 	'ax': 'acceleration in X', 'ay': 'acceleration in Y', 'az': 'acceleration in Z',
 	'mx': 'magnetoscope in X', 'my': 'magnetoscope in Y', 'mz': 'magnetoscope in Z',
 	'gx': 'gyroscope in X', 'gy': 'gyroscope in Y', 'gz': 'gyroscope in Z',
-	'f': 'timestamp', 't': 'temperature', 'p': 'pressure', 'h': 'height'
+	'f': 'timestamp', 't': 'temperature', 'p': 'pressure', 'h': 'altitude'
 }
+
+def retrieve_string_now():
+        '''
+        Retrieve the time since epoch
+        Return: time since epoch multiplied by 100 to do it integer
+        '''        
+        now = time.time()
+        now = int(now * 100)
+        string_now = str(now)
+        return string_now
 
 def txt_to_dataframes(txt_file, pattern):
 	'''
@@ -69,7 +79,24 @@ def extract_valid_launches(dataframes, min_milliseconds_launch = 8000, milliseco
 			valid_dataframes.append(dataframe)
 	return valid_dataframes
 
+def save_altitude_time_basic(dataframe):
+	MAX = dataframe.h.max()
+	MIN = dataframe.h.min()
+	plt.plot(dataframe.f, dataframe.h, linewidth=1.0, color="blue")
+	xlabel('Time (milliseconds)', fontsize = 10)
+	ylabel('Altitude (meters)', fontsize = 10)
+	title('Altitude from the launch platform', fontsize=12)
+	#main_legend = legend(['Altitude over the time'], loc='upper right', shadow=True)
+	data_legend = legend(['MAX: %.2f\nMIN: %.2f' % (MAX, MIN)], loc=1)
+	#gca().add_artist(main_legend)
+	gca().add_artist(data_legend)
+	grid(True)
+	#plt.savefig(image_path, orientation='landscape', bbox_inches='tight', pad_inches=0)
+    #plt.close()
+	plt.show()
 
 dataframes = txt_to_dataframes(file_path, "m")
 valid_dataframes = extract_valid_launches(dataframes)
-print valid_dataframes[0].head(3)
+#print valid_dataframes[0].tail(3)
+for dataframe in valid_dataframes:
+	save_altitude_time_basic(dataframe)
