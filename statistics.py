@@ -23,7 +23,8 @@ def split_in_blocks(txt_file, pattern):
 		if num_line == 0:
 			header = list(line.strip().split(","))
 			#print header
-	blocks_of_data = []
+	#print num_times_find_pattern
+	dataframes = []
 	with open(txt_file) as f:
 		lines = f.readlines()
 		for num_header_line in num_times_find_pattern:
@@ -31,13 +32,11 @@ def split_in_blocks(txt_file, pattern):
 				num_header_line_prev = num_header_line
 			else:
 				block_lines = lines[num_header_line_prev + 1 : num_header_line - 1]
-				blocks_of_data.append(block_lines)
+				dataframes.append(pd.DataFrame(block_lines))
 				num_header_line_prev = num_header_line
 		block_lines = lines[num_header_line_prev + 1 : num_line + 1]
-		blocks_of_data.append(block_lines)
-	return blocks_of_data, header
+		dataframes.append(pd.DataFrame(block_lines))
+	return dataframes
 
-#blocks_of_data = split_in_blocks(file_path, "m")
-#print blocks_of_data
-table = pd.read_table(file_path, sep=',')
-print table
+
+dataframes = split_in_blocks(file_path, "m")
