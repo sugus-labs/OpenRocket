@@ -19,23 +19,23 @@ def txt_to_dataframes(txt_file, pattern):
 	num_times_find_pattern = []
 	for num_line, line in enumerate(fileinput.input(txt_file)):
 		if pattern in line:
-			num_times_find_pattern.append(num_line)
-		if num_line == 0:
-			header = list(line.strip().split(","))
-			#print header
+			num_times_find_pattern.append(num_line)	
+	max_num_line = max(enumerate(fileinput.input(txt_file)))
+	num_times_find_pattern.append(max_num_line[0])
 	#print num_times_find_pattern
+	num_lines_list = []
+	for num in num_times_find_pattern:
+		if num == 0:
+			num_prev = num
+		else:
+			num_lines_list.append(num - num_prev - 1)
+			num_prev = num
+	#print num_lines_list
 	dataframes = []
-	with open(txt_file) as f:
-		lines = f.readlines()
-		for num_header_line in num_times_find_pattern:
-			if num_header_line == 0:
-				num_header_line_prev = num_header_line
-			else:
-				block_lines = lines[num_header_line_prev + 1 : num_header_line - 1]
-				dataframes.append(pd.DataFrame(block_lines))
-				num_header_line_prev = num_header_line
-		block_lines = lines[num_header_line_prev + 1 : num_line + 1]
-		dataframes.append(pd.DataFrame(block_lines))
+	reader = pd.read_table(file_path, sep=',', iterator=True)
+	for num_line in num_lines_list:
+		lines = reader.get_chunk(num_line)
+		#print lines
 	return dataframes
 
 def extract_valid_launches(dataframes, min_milliseconds_launch = 8000, milliseconds_write_cycle_mean = 23):
@@ -56,4 +56,9 @@ def extract_valid_launches(dataframes, min_milliseconds_launch = 8000, milliseco
 
 
 dataframes = txt_to_dataframes(file_path, "m")
-valid_dataframes = extract_valid_launches(dataframes)
+# valid_dataframes = extract_valid_launches(dataframes)
+# print valid_dataframes
+
+#reader = pd.read_table(file_path, sep=',', iterator=True)
+#r = reader.get_chunk(588)
+#print r
