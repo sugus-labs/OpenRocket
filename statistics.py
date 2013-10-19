@@ -1,6 +1,5 @@
 import fileinput
 import math
-import collections
 import time
 import numpy as np
 from pylab import *
@@ -8,8 +7,16 @@ from matplotlib import pyplot as plt
 import matplotlib.mlab as mlab
 import pandas as pd
 
+# 1-51, 1-301, 1-5801
+
 #file_path = '/media/ABB4-4F3A/DATALOG.TXT'
 file_path = 'DATALOG.TXT'
+headers = {
+	'ax': 'acceleration in X', 'ay': 'acceleration in Y', 'az': 'acceleration in Z',
+	'mx': 'magnetoscope in X', 'my': 'magnetoscope in Y', 'mz': 'magnetoscope in Z',
+	'gx': 'gyroscope in X', 'gy': 'gyroscope in Y', 'gz': 'gyroscope in Z',
+	'f': 'timestamp', 't': 'temperature', 'p': 'pressure', 'h': 'height'
+}
 
 def txt_to_dataframes(txt_file, pattern):
 	'''
@@ -22,20 +29,28 @@ def txt_to_dataframes(txt_file, pattern):
 			num_times_find_pattern.append(num_line)	
 	max_num_line = max(enumerate(fileinput.input(txt_file)))
 	num_times_find_pattern.append(max_num_line[0])
-	#print num_times_find_pattern
+	print num_times_find_pattern
 	num_lines_list = []
-	for num in num_times_find_pattern:
-		if num == 0:
-			num_prev = num
+	for num_line in num_times_find_pattern:
+		print "num:", num_line
+		if num_line == 0:
+			num_prev = num_line
 		else:
-			num_lines_list.append(num - num_prev - 1)
-			num_prev = num
-	#print num_lines_list
+			num_lines_list.append(num_line - num_prev)
+			num_prev = num_line
+	num_lines_list[-1] = num_lines_list[-1] + 1
+	print num_lines_list
 	dataframes = []
 	reader = pd.read_table(file_path, sep=',', iterator=True)
 	for num_line in num_lines_list:
-		lines = reader.get_chunk(num_line)
-		#print lines
+		if num_line != 1:
+			dataframe = reader.get_chunk(num_line)
+			#dataframe = dataframe.dropna()
+			dataframes.append(dataframe)
+			print dataframe.head(2)
+			print dataframe.tail(2)
+		else:
+			dataframe = reader.get_chunk(num_line)
 	return dataframes
 
 def extract_valid_launches(dataframes, min_milliseconds_launch = 8000, milliseconds_write_cycle_mean = 23):
@@ -46,19 +61,15 @@ def extract_valid_launches(dataframes, min_milliseconds_launch = 8000, milliseco
 		milliseconds_write_cycle_mean = 23. By default each Arduino write cycle is 23 milliseconds
 	Return: Valid dataframes with real launches
 	'''
-	# minimum entries by default will be 348
+	# minimum entries by default will be 347 = 8000 / 23
 	minimum_entries = int(min_milliseconds_launch / milliseconds_write_cycle_mean)
 	valid_dataframes = []
 	for dataframe in dataframes:
-		if dataframe.count() > minimum_entries:
+		if len(dataframe.index) > minimum_entries:
 			valid_dataframes.append(dataframe)
 	return valid_dataframes
 
 
 dataframes = txt_to_dataframes(file_path, "m")
-# valid_dataframes = extract_valid_launches(dataframes)
-# print valid_dataframes
-
-#reader = pd.read_table(file_path, sep=',', iterator=True)
-#r = reader.get_chunk(588)
-#print r
+#valid_dataframes = extract_valid_launches(dataframes)
+#print valid_dataframes[0].head(33)
