@@ -29,26 +29,26 @@ def txt_to_dataframes(txt_file, pattern):
 			num_times_find_pattern.append(num_line)	
 	max_num_line = max(enumerate(fileinput.input(txt_file)))
 	num_times_find_pattern.append(max_num_line[0])
-	print num_times_find_pattern
+	#print num_times_find_pattern
 	num_lines_list = []
 	for num_line in num_times_find_pattern:
-		print "num:", num_line
 		if num_line == 0:
 			num_prev = num_line
 		else:
 			num_lines_list.append(num_line - num_prev)
 			num_prev = num_line
 	num_lines_list[-1] = num_lines_list[-1] + 1
-	print num_lines_list
+	#print num_lines_list
 	dataframes = []
 	reader = pd.read_table(file_path, sep=',', iterator=True)
 	for num_line in num_lines_list:
 		if num_line != 1:
 			dataframe = reader.get_chunk(num_line)
 			#dataframe = dataframe.dropna()
+			dataframe = dataframe.drop(dataframe.index[-1])
 			dataframes.append(dataframe)
-			print dataframe.head(2)
-			print dataframe.tail(2)
+			#print dataframe.head(2)
+			#print dataframe.tail(2)
 		else:
 			dataframe = reader.get_chunk(num_line)
 	return dataframes
@@ -71,5 +71,5 @@ def extract_valid_launches(dataframes, min_milliseconds_launch = 8000, milliseco
 
 
 dataframes = txt_to_dataframes(file_path, "m")
-#valid_dataframes = extract_valid_launches(dataframes)
-#print valid_dataframes[0].head(33)
+valid_dataframes = extract_valid_launches(dataframes)
+print valid_dataframes[0].head(3)
