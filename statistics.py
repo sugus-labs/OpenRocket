@@ -80,8 +80,10 @@ def extract_valid_launches(dataframes, min_milliseconds_launch = 8000, milliseco
 	return valid_dataframes
 
 def save_altitude_time_basic(dataframe):
+	now = retrieve_string_now()
 	MAX = dataframe.h.max()
 	MIN = dataframe.h.min()
+	fig = figure(1, figsize=(16, 12))
 	plt.plot(dataframe.f, dataframe.h, linewidth=1.0, color="blue")
 	xlabel('Time (milliseconds)', fontsize = 10)
 	ylabel('Altitude (meters)', fontsize = 10)
@@ -91,9 +93,10 @@ def save_altitude_time_basic(dataframe):
 	#gca().add_artist(main_legend)
 	gca().add_artist(data_legend)
 	grid(True)
-	#plt.savefig(image_path, orientation='landscape', bbox_inches='tight', pad_inches=0)
-    #plt.close()
-	plt.show()
+	image_path = '/home/gustavo/Desktop/OpenRocket/images/data/altitude_%s.png' % now 
+	plt.savefig(image_path, orientation='landscape', bbox_inches='tight', pad_inches=0)
+	plt.close()
+	#plt.show()
 
 dataframes = txt_to_dataframes(file_path, "m")
 valid_dataframes = extract_valid_launches(dataframes)
