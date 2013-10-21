@@ -8,14 +8,14 @@ import matplotlib.mlab as mlab
 import pandas as pd
 
 # 1-51, 1-301, 1-5801
-
+degree_sign= u'\N{DEGREE SIGN}'
 #file_path = '/media/ABB4-4F3A/DATALOG.TXT'
 file_path = 'DATALOG.TXT'
 headers = {
 	'ax': 'acceleration in X', 'ay': 'acceleration in Y', 'az': 'acceleration in Z',
 	'mx': 'magnetoscope in X', 'my': 'magnetoscope in Y', 'mz': 'magnetoscope in Z',
 	'gx': 'gyroscope in X', 'gy': 'gyroscope in Y', 'gz': 'gyroscope in Z',
-	'f': 'timestamp', 't': 'temperature', 'p': 'pressure', 'h': 'altitude (meters)'
+	'f': 'timestamp', 't': 'temperature (%sC)' % degree_sign, 'p': 'pressure', 'h': 'altitude (meters)'
 }
 
 def retrieve_string_now():
@@ -96,15 +96,18 @@ def save_altitude_time_basic(dataframe):
 	#gca().add_artist(main_legend)
 	gca().add_artist(data_legend)
 	grid(True)
-	#image_path = '/home/gustavo/Desktop/OpenRocket/images/data/altitude_%s.png' % now 
-	#plt.savefig(image_path, orientation='landscape', bbox_inches='tight', pad_inches=0)
-	#plt.close()
-	plt.show()
+	image_path = '/home/weblord/Desktop/OpenRocket/images/data/altitude_%s.png' % now 
+	plt.savefig(image_path, orientation='landscape', bbox_inches='tight', pad_inches=0)
+	plt.close()
+	#plt.show()
 
-def save_altitude_pressure_time_basic(dataframe):
+def save_altitude_temp_time_basic(dataframe):
 	now = retrieve_string_now()
 	MAX = dataframe.h.max()
-	MIN = dataframe.h.min()
+	MIN = dataframe.h.min()	
+	# Comment the line below if you want a default image
+	# If you dont comment you will have a bigger image but the processing time will increase
+	fig = figure(1, figsize=(16, 12))
 	# make a little extra space between the subplots
 	plt.subplots_adjust(wspace=0.1)
 
@@ -121,15 +124,18 @@ def save_altitude_pressure_time_basic(dataframe):
 	grid(True)
 
 	plt.subplot(212)
-	plt.plot(dataframe.f, dataframe.p, linewidth=1.0, color="blue")
+	plt.plot(dataframe.f, dataframe.t, linewidth=1.0, color="blue")
 	xlabel('Time (milliseconds)', fontsize = 10)
-	ylabel(headers['p'], fontsize = 10)
-	title('%s from the launch platform' % headers['p'], fontsize=12)
+	ylabel(headers['t'], fontsize = 10)
+	title('%s from the launch platform' % headers['t'], fontsize=12)
 	grid(True)
-	plt.show()
+	image_path = '/home/weblord/Desktop/OpenRocket/images/data/altitude_temp_%s.png' % now 
+	plt.savefig(image_path, orientation='landscape', bbox_inches='tight', pad_inches=0)
+	plt.close()
+	#plt.show()
 
 dataframes = txt_to_dataframes(file_path, "m")
 valid_dataframes = extract_valid_launches(dataframes)
 #print valid_dataframes[0].tail(3)
 for dataframe in valid_dataframes:
-	save_altitude_pressure_time_basic(dataframe)
+	save_altitude_temp_time_basic(dataframe)
