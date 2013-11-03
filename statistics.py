@@ -129,7 +129,7 @@ def save_altitude_temp_time_basic(dataframe):
 	ylabel(headers['t'], fontsize = 10)
 	title('%s from the launch platform' % headers['t'], fontsize=12)
 	grid(True)
-	image_path = '/home/weblord/Desktop/OpenRocket/images/data/altitude_temp_%s.png' % now 
+	image_path = '/home/gustavo/Desktop/OpenRocket/images/data/altitude_temp_%s.png' % now 
 	plt.savefig(image_path, orientation='landscape', bbox_inches='tight', pad_inches=0)
 	plt.close()
 	#plt.show()
