@@ -697,3 +697,8 @@ float getKelvin(float celsius)
 {
   return celsius + 273.15;
 }
+
+float[] getAcc(float accel[])
+{
+  //TODO
+}
